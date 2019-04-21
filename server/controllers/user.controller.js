@@ -5,7 +5,17 @@ const User = require('../models/User.model');
 
 const CONFIG = require('../../config/env');
 
-exports.login = async (req, res) => {
+exports.session = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) throw Error('User not found');
+        res.status(200).json(user.toWebShort());
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.login = async (req, res, next) => {
     try {
         const {email, password} = req.body;
         const user = await User.findOne({email});
@@ -35,14 +45,13 @@ exports.register = async (req, res, next) => {
         res.cookie('token', `Bearer ${token}`, {httpOnly: true});
         res.status(201).json(user.toWebShort());
     } catch (error) {
-        
         next(error);
     }
 };
 
-exports.logout = async (req, res) => {
+exports.logout = async (req, res, next) => {
     res.clearCookie('token');
-    res.status(200).json('You successfully loged out')
+    res.status(200).json('You successfully loged out');
 };
 
 exports.validatorHandler = async (req, res, next) => {

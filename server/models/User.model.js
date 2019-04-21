@@ -2,15 +2,16 @@ const {Schema, model} = require('mongoose');
 
 const userSchema = new Schema(
     {
-        name: {type: String, trim: true, unique: true, minlenght: 3, maxlength: 15, reqired: 'Name is required', index: true},
-        email: {type: String, trim: true, unique: true, lowercase: true, reqired: 'Email is required', index: true},
+        name: {type: String, unique: true, index: true},
+        email: {type: String, unique: true, index: true},
         password: {type: String, requred: true},
         avatar: String,
         info: {type: String, trim: true, maxlength: 100},
-        articles: [{type: Schema.Types.ObjecId, ref: 'Article'}],
+        articles: [{type: Schema.Types.ObjectId, ref: 'Article'}],
         claps: [{type: Schema.Types.ObjectId, ref: 'Articles'}],
         following: [{type: Schema.Types.ObjectId, ref: 'User'}],
         followers: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        status: {type: String, required: true, default: 'general'}
     }, 
     {
         timestamps: true
@@ -23,5 +24,22 @@ userSchema.pre('findById', function (next) {
     this.populate('following', '_id name avatar');
     this.populate('followers', '_id name avatar');
 })
+
+userSchema.methods.toWeb = function(){
+    const user = this.toJSON();
+    delete user.password;
+    return user
+}
+
+userSchema.methods.toWebShort = function(){
+    const userData = this.toJSON();
+    const user = {
+        _id: userData._id,
+        name: userData.name,
+        email: userData.email,
+        status: userData.status,
+    } 
+    return user;
+}
 
 module.exports = model('User', userSchema);

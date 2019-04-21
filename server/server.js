@@ -4,10 +4,12 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const compression = require('compression');
 const cors = require('cors');
+const expressValidator = require('express-validator')
+const cookieParser = require('cookie-parser');
 
 const CONFIG = require('../config/env');
-const userRoutes = require('../routes/user.routes');
-const articleRoutes = require('../routes/article.routes');
+const userRoutes = require('./routes/user.routes');
+const articleRoutes = require('./routes/article.routes');
 
 const port = CONFIG.port;
 const dev = CONFIG.node_env !== 'production';
@@ -21,7 +23,9 @@ app.prepare().then(() => {
     server.use(helmet());
     server.use(compression());
     server.use(cors());
-    server.use(express.json())
+    server.use(express.json());
+    server.use(expressValidator());
+    server.use(cookieParser());
 
     // Handle Next.js's requests
     server.get("/_next/*", (req, res) => {
@@ -32,11 +36,12 @@ app.prepare().then(() => {
     });
 
     // Custom api routes
-    server.use('/api/user', userRoutes)
-    server.use('/api/article', articleRoutes)
+    server.use('/api/user', userRoutes);
+    server.use('/api/article', articleRoutes);
 
     // Error handler
     server.use((err, req, res, next) => {
+        console.log(err);
         const { status = 500, message } = err;
         res.status(status).json(message);
       });

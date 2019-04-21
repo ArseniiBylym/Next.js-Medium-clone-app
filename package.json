@@ -2,21 +2,31 @@
   "name": "nextjs-medium-app",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "dev": "next",
+    "dev": "nodemon server/server.js --watch server",
+    "start": "next server/server.js",
     "build": "next build",
-    "start": "next start"
+    "deploy": "now --public"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@material-ui/core": "^3.9.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "helmet": "^3.16.0",
+    "mongoose": "^5.5.2",
     "next": "^8.0.4",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-icons": "^3.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.11"
   }
 }

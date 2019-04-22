@@ -11,7 +11,7 @@ class MyDocument extends Document {
             <Html>
                 <Head>
                     <title>Next.js app</title>
-                    <link rel="shortcut icon" href="/static/image/favicon.ico" />
+                    <link rel="shortcut icon" href="/static/images/favicon.ico" />
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500"/>
                 </Head>
                 <body>

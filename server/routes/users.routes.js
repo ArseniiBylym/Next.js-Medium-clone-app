@@ -6,17 +6,22 @@ const {uploadAvatar, resizeAvatar} = require('../middlewares/user');
 
 const router = Router();
 
-router.get('/test', (req, res) => {
-    res.json('Users router works!')
-});
+router.route('/')
+        .get(usersController.getUsers);
 
-router.get('/', usersController.getUsers);
-router.put('/follow', isAuth, usersController.follow);
-router.put('/unfollow', isAuth, usersController.unfollow);
-router.put('/add-bookmark', isAuth, usersController.addBookmark);
-router.put('/remove-bookmark', isAuth, usersController.removeBookmark);
-router
-    .route('/:userId')
+router.route('/follow')
+        .put( isAuth, usersController.follow);
+        
+router.route('/unfollow')
+        .put( isAuth, usersController.unfollow);
+        
+router.route('/add-bookmark')
+        .put(isAuth, usersController.addBookmark);
+
+router.route('/remove-bookmark')
+        .put(isAuth, usersController.removeBookmark);
+
+router.route('/:userId')
         .get(usersController.getUser)
         .put(isAuth, isOwner, uploadAvatar, resizeAvatar, usersController.updateUser)
         .delete(isAuth, isOwner, usersController.deleteUser);

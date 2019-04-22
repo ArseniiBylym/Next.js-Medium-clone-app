@@ -29,4 +29,8 @@ articleSchema.pre('findById', function (next) {
     this.populate('claps', '_id name avatar');
 })
 
+articleSchema.methods.getCommentsId = function() {
+    return this.comments.map(comment => comment.author)
+}
+
 module.exports = model('Article', articleSchema);

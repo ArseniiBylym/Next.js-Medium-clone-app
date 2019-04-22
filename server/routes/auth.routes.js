@@ -5,14 +5,16 @@ const {isAuth} = require('../middlewares/auth');
 
 const router = Router();
 
-router.get('/test', (req, res) => {
-    res.json('Auth router works!')
-});
+router.route('/session')
+        .get(isAuth, authController.session);
 
-router.get('/session', isAuth, authController.session);
-router.post('/register', userRegister, authController.validatorHandler, authController.register);
-router.post('/login', authController.login);
-router.get('/logout', authController.logout);
+router.route('/register')
+        .post(userRegister, authController.validatorHandler, authController.register);
 
+router.route('/login')
+        .post(authController.login);
+
+router.route('/logout')
+        .get(authController.logout);
 
 module.exports = router;

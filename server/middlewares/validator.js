@@ -1,4 +1,4 @@
-const {body, validationResult} = require('express-validator/check');
+const {body} = require('express-validator/check');
 const User = require('../models/User.model');
 
 exports.userRegister = [
@@ -33,26 +33,3 @@ exports.userRegister = [
             return true;
         }),
 ];
-
-exports.userLogin = [
-    body('email')
-        .isEmail().withMessage('Email should be a valid email')
-        .normalizeEmail()
-        .custom(value => {
-            return User.findOne({email: value}).then(user => {
-                if (!user) {
-                    return Promise.reject('Wrong email');
-                }
-            })
-        }),
-    body('password')
-        .not().isEmpty().withMessage('Password is required')
-        .custom(value => {
-            return bcrypt.compare(value)
-            return User.findOne({email: value}).then(user => {
-                if (!user) {
-                    return Promise.reject('Wrong email');
-                }
-            })
-        }),
-]

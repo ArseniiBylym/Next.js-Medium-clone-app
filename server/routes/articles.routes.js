@@ -3,7 +3,7 @@ const {Router} = require('express');
 const router = Router();
 
 router.get('/test', (req, res, next) => {
-    res.json('Article router wors!')
+    res.json('Articles router wors!')
 });
 // router.get('/', () => {});
 

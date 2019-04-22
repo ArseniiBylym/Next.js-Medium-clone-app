@@ -8,8 +8,9 @@ const expressValidator = require('express-validator')
 const cookieParser = require('cookie-parser');
 
 const CONFIG = require('../config/env');
-const userRoutes = require('./routes/user.routes');
-const articleRoutes = require('./routes/article.routes');
+const authRoutes = require('./routes/auth.routes');
+const usersRoutes = require('./routes/users.routes');
+const articlesRoutes = require('./routes/articles.routes');
 
 const port = CONFIG.port;
 const dev = CONFIG.node_env !== 'production';
@@ -36,8 +37,9 @@ app.prepare().then(() => {
     });
 
     // Custom api routes
-    server.use('/api/user', userRoutes);
-    server.use('/api/article', articleRoutes);
+    server.use('/api/auth', authRoutes);
+    server.use('/api/users', usersRoutes);
+    server.use('/api/articles', articlesRoutes);
 
     // Error handler
     server.use((err, req, res, next) => {

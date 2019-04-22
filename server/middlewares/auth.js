@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const CONFIG = require('../../config/env');
 
-const isAuth = (req, res, next) => {
+exports.isAuth = (req, res, next) => {
     const token = req.cookies.token ? req.cookies.token.split(' ')[1] : null;
     if (!token) {
         return res.status(401).json('User not authorized');
@@ -15,4 +15,9 @@ const isAuth = (req, res, next) => {
     }
 };
 
-module.exports = isAuth;
+exports.isOwner = (req, res, next) => {
+    if (req.params.userId !== req.user._id) {
+        res.status(401).json('Sorry, tyu have no permission for this route')
+    }
+    next()
+}

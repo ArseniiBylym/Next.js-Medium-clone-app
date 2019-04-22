@@ -61,8 +61,3 @@ exports.validatorHandler = async (req, res, next) => {
     }
     next();
 };
-
-exports.isAuth = async (req, res, next) => {
-    console.log('Is user auth');
-    next();
-};

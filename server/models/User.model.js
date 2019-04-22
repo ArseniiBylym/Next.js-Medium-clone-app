@@ -9,9 +9,11 @@ const userSchema = new Schema(
         info: {type: String, trim: true, maxlength: 100},
         articles: [{type: Schema.Types.ObjectId, ref: 'Article'}],
         claps: [{type: Schema.Types.ObjectId, ref: 'Articles'}],
+        bookmarks: [{type: Schema.Types.ObjectId, ref: 'Articles'}],
         following: [{type: Schema.Types.ObjectId, ref: 'User'}],
         followers: [{type: Schema.Types.ObjectId, ref: 'User'}],
-        status: {type: String, required: true, default: 'general'}
+        status: {type: String, required: true, default: 'general'},
+
     }, 
     {
         timestamps: true

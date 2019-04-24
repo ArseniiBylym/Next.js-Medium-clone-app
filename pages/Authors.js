@@ -1,4 +1,4 @@
-import Components from './../components/index';
+import Components from '../components/index';
 
 const Authors = () => {
     return (

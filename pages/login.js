@@ -1,6 +1,9 @@
-import {useState} from 'react';
-import Link from 'next/link';
+import React, {Component} from 'react';
+import NextLink from 'next/link';
+import {withStyles} from '@material-ui/core/styles';
+
 import Avatar from '@material-ui/core/Avatar';
+import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -9,108 +12,130 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-
 import {FaMedium} from 'react-icons/fa';
+import {inject, observer} from 'mobx-react';
+import API from '../api';
 import Components from './../components/index';
 
-const styles = () => (
-    <style jsx>{`
-        .wrapper {
-            height: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .main {
-            width: 400px;
-            margin: 0 auto;
-        }
-        .paper {
-            display: flex;
-            flex-flow: column nowrap;
-            align-items: center;
-            padding: 2rem 3rem;
-        }
-        .avatar {
-            margin: 0.5rem;
-            background-color: black;
-            cursor: pointer;
-        }
-        .submit {
-            margin-top: 2rem;
-        }
-        .text {
-            margin-top: 2rem;
-        }
-    `}</style>
-);
-
-const defaultForm = {
+const defaultState = {
     email: '',
     password: '',
-}
+    rememberUser: false,
+    errorMessage: '',
+};
 
-const Login = props => {
+@inject('store')
+@observer
+class Login extends Component {
+    state = defaultState;
 
-    const [form, setForm] = useState(defaultForm)
-    const [rememberUser, setRememberUser] = useState(false);
-
-    const submitHandler = e => {
+    submitHandler = async e => {
+        const {email, password} = this.state;
         e.preventDefault();
-        console.log(form)
-    }
+        const {data, status} = await API.POST('/api/auth/login', {email, password});
+        if (status > 300) {
+            console.log(data);
+            this.setState({
+                errorMessage: data
+            })
+        }
+    };
 
-    const inputHandler = e => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
+    snackbarCloseHandler = () => {
+        this.setState({
+            errorMessage: '',
         })
     }
 
-    const checkboxHandler = e => {
-        console.log(e.target.value)
-        setRememberUser(!rememberUser)
-    }
-    return (
-        <Components.Layout>
-            <div className="wrapper">
-                <div className="main">
-                    <Paper className="paper">
-                        <Link href="/">
-                            <Avatar className="avatar">
-                                <FaMedium />
-                            </Avatar>
-                        </Link>
-                        <Typography component="h1" variant="h5">
-                            Login
-                        </Typography>
-                        <form className="form" onSubmit={submitHandler}>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel>Email</InputLabel>
-                                <Input name="email" autoComplete="email" autoFocus value={form.email} onChange={inputHandler}/>
-                            </FormControl>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel>Password</InputLabel>
-                                <Input name="password" type="password" autoComplete="current-password" value={form.password} onChange={inputHandler}/>
-                            </FormControl>
-                            <FormControlLabel control={<Checkbox checked={rememberUser} color="primary" />} label="Remember me" onChange={checkboxHandler}/>
-                            <Button type="submit" fullWidth variant="contained" color="primary" className="submit">
-                                Login
-                            </Button>
-                        </form>
-                        <Link href="/register">
-                            <a>
-                                <Typography className="text">Create new account</Typography>
-                            </a>
-                        </Link>
-                    </Paper>
-                </div>
-            </div>
-            {styles()}
-        </Components.Layout>
-    );
-};
+    inputHandler = e => {
+        this.setState({
+            ...this.state,
+            [e.target.name]: e.target.value,
+        });
+    };
 
-export default Login;
+    checkboxHandler = e => {
+        console.log(e.target.value);
+        this.setState(prevState => ({
+            ...this.state,
+            rememberUser: !prevState.rememberUser,
+        }));
+    };
+    render() {
+        const {email, password, rememberUser, errorMessage} = this.state;
+        const {classes} = this.props;
+        return (
+            <Components.Layout>
+                <div className={classes.wrapper}>
+                    <div className={classes.main}>
+                        <Paper className={classes.paper}>
+                            <NextLink href="/">
+                                <Avatar className={classes.avatar}>
+                                    <FaMedium />
+                                </Avatar>
+                            </NextLink>
+                            <Typography component="h1" variant="h5">
+                                Login
+                            </Typography>
+                            <form onSubmit={this.submitHandler}>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel>Email</InputLabel>
+                                    <Input name="email" autoComplete="email" autoFocus value={email} onChange={this.inputHandler} />
+                                </FormControl>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel>Password</InputLabel>
+                                    <Input name="password" type="password" autoComplete="current-password" value={password} onChange={this.inputHandler} />
+                                </FormControl>
+                                <FormControlLabel control={<Checkbox checked={rememberUser} color="primary" />} label="Remember me" onChange={this.checkboxHandler} />
+                                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+                                    Login
+                                </Button>
+                            </form>
+                            <NextLink href="/register">
+                                <Link>
+                                    <Typography className={classes.text}>Create new account</Typography>
+                                </Link>
+                            </NextLink>
+                        </Paper>
+                    </div>
+                </div>
+                <Components.Snackbar message={errorMessage} handleClose={this.snackbarCloseHandler}/>
+            </Components.Layout>
+        );
+    }
+}
+
+const styles = themes => ({
+    wrapper: {
+        height: '100%',
+        maxWidth: '1400px',
+        margin: '0 auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    main: {
+        width: '400px',
+        margin: '3rem 0 auto',
+    },
+    paper: {
+        display: 'flex',
+        flexFlow: 'column nowrap',
+        alignItems: 'center',
+        padding: '2rem 3rem',
+    },
+    avatar: {
+        margin: '0.5rem',
+        backgroundColor: themes.palette.text.primary,
+        cursor: 'pointer',
+    },
+    submit: {
+        marginTop: '2rem',
+    },
+    text: {
+        cursor: 'pointer',
+        marginTop: '2rem',
+    }
+})
+
+export default withStyles(styles)(Login);

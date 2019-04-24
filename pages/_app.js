@@ -4,7 +4,6 @@ import React from 'react';
 import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import JssProvider from "react-jss/lib/JssProvider";
-// import withNProgress from "next-nprogress";
 import NProgress from "next-nprogress/component";
 import {initializeStore} from '../store';
 import {Provider} from 'mobx-react';
@@ -39,6 +38,7 @@ class MyApp extends App {
         if (jssStyles && jssStyles.parentNode) {
             jssStyles.parentNode.removeChild(jssStyles);
         }
+
     }
 
     render() {

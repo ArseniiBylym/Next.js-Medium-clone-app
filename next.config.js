@@ -1,10 +1,8 @@
-const { parsed: localEnv } = require('dotenv').config()
-const webpack = require('webpack')
+const {client} = require('./config');
 
 module.exports = {
-  webpack(config) {
-    config.plugins.push(new webpack.EnvironmentPlugin(localEnv))
-
-    return config
-  }
+    env: {
+        JWT_SECRET_KEY: client.JWT_SECRET_KEY,
+        BASE_URI: client.BASE_URI,
+    }
 }

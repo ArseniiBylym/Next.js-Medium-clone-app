@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server/server.js --watch server",
-    "start": "next server/server.js",
+    "start": "node server/server.js",
     "build": "next build",
     "deploy": "now --public"
   },

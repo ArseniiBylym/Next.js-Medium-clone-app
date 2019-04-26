@@ -1,5 +1,5 @@
 import axios from 'axios';
-const CONFIG = require('../config/env');
+const BASE_URI = process.env.BASE_URI;
 
 const handleResponse = response => {
     const {data, status} = response;
@@ -9,7 +9,7 @@ const handleResponse = response => {
 const API = {
     GET: async(url) => {
         try {
-            const response = await axios.get(CONFIG.base_uri + url);
+            const response = await axios.get(BASE_URI + url);
             return handleResponse(response);
         } catch (error) {
             console.log(error)
@@ -18,7 +18,7 @@ const API = {
     },
     POST: async(url, payloads) => {
         try {
-            const response = await axios.post(CONFIG.base_uri + url, payloads);
+            const response = await axios.post(BASE_URI + url, payloads);
             return handleResponse(response);
         } catch (error) {
             console.log(error)
@@ -27,7 +27,7 @@ const API = {
     },
     PUT: async(url, payloads) => {
         try {
-            const response = await axios.put(CONFIG.base_uri + url, payloads);
+            const response = await axios.put(BASE_URI + url, payloads);
             return handleResponse(response);
         } catch (error) {
             return handleResponse(error.response);
@@ -35,7 +35,7 @@ const API = {
     },
     DELETE: async(url) => {
         try {
-            const response = await axios.get(CONFIG.base_uri + url);
+            const response = await axios.get(BASE_URI + url);
             return handleResponse(response);
         } catch (error) {
             return handleResponse(error.response);

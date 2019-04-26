@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User.model');
 
-const CONFIG = require('../../config/env');
+const CONFIG = require('../../config');
 
 exports.session = async (req, res, next) => {
     try {
@@ -26,7 +26,7 @@ exports.login = async (req, res, next) => {
         if (!isPasswordMatches) {
             res.status(400).json('Wrong password');
         }
-        const token = jwt.sign({email: user.email, _id: user._id}, CONFIG.jwt_secret, {expiresIn: CONFIG.jwt_expiration_time});
+        const token = jwt.sign({email: user.email, _id: user._id, name: user.name, avatar: user.avatar}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
 
         res.cookie('token', `Bearer ${token}`, {httpOnly: true});
         res.status(201).json(user.toWebShort());
@@ -40,7 +40,7 @@ exports.register = async (req, res, next) => {
         const {name, email, password} = req.body;
         const encryptedPassword = await bcrypt.hash(password, 10);
         const user = await new User({name, email, password: encryptedPassword}).save();
-        const token = jwt.sign({email: user.email, _id: user._id.toString()}, CONFIG.jwt_secret, {expiresIn: CONFIG.jwt_expiration_time});
+        const token = jwt.sign({email: user.email, _id: user._id.toString()}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
 
         res.cookie('token', `Bearer ${token}`, {httpOnly: true});
         res.status(201).json(user.toWebShort());

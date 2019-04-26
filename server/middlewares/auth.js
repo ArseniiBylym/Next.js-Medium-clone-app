@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const CONFIG = require('../../config/env');
+const CONFIG = require('../../config');
 
 exports.isAuth = (req, res, next) => {
     const token = req.cookies.token ? req.cookies.token.split(' ')[1] : null;
@@ -7,7 +7,7 @@ exports.isAuth = (req, res, next) => {
         return res.status(401).json('User not authorized');
     }
     try {
-        const decodedToken = jwt.verify(token, CONFIG.jwt_secret);
+        const decodedToken = jwt.verify(token, CONFIG.server.JWT_SECRET_KEY);
         req.user = decodedToken;
         next();
     } catch (error) {

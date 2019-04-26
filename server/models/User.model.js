@@ -5,7 +5,7 @@ const userSchema = new Schema(
         name: {type: String, unique: true, index: true},
         email: {type: String, unique: true, index: true},
         password: {type: String, requred: true},
-        avatar: String,
+        avatar: {type: String, default: '/static/images/avatar.png'},
         info: {type: String, trim: true, maxlength: 100},
         articles: [{type: Schema.Types.ObjectId, ref: 'Article'}],
         claps: [{type: Schema.Types.ObjectId, ref: 'Article'}],
@@ -40,6 +40,7 @@ userSchema.methods.toWebShort = function(){
         name: userData.name,
         email: userData.email,
         status: userData.status,
+        avatar: userData.avatar,
     } 
     return user;
 }

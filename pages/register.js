@@ -1,7 +1,11 @@
-import {useState} from 'react';
-import Link from 'next/link';
+import React, {Component} from 'react';
+import {withStyles} from '@material-ui/core/styles';
+import {withRouter} from 'next/router';
+
+import NextLink from 'next/link';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Link from '@material-ui/core/Link';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -9,123 +13,140 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
-
 import {FaMedium} from 'react-icons/fa';
-import Components from './../components/index';
-
-const styles = () => (
-    <style jsx>{`
-        .wrapper {
-            height: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .main {
-            width: 500px;
-            margin: 0 auto;
-        }
-        .paper {
-            display: flex;
-            flex-flow: column nowrap;
-            align-items: center;
-            padding: 2rem 3rem;
-        }
-        .avatar {
-            margin: 0.5rem;
-            background-color: black;
-            cursor: pointer;
-        }
-        .submit {
-            margin-top: 2rem;
-        }
-        .text {
-            margin-top: 2rem;
-        }
-    `}</style>
-);
+import {inject, observer} from 'mobx-react';
+import Components from './../components';
+import API from '../api';
 
 const defaultForm = {
     name: '',
-    public_name: '',
     email: '',
     password: '',
-    confirm_password: ''
-}
+    password_confirm: '',
+    rememberUser: false,
+    errorMessage: '',
+};
 
-const Register = props => {
+@inject('store')
+@observer
+class Register extends Component {
+    state = defaultForm;
 
-    const [form, setForm] = useState(defaultForm)
-    const [rememberUser, setRememberUser] = useState(false);
-
-    const submitHandler = e => {
+    submitHandler = async e => {
+        const {name, email, password, password_confirm} = this.state;
         e.preventDefault();
-        console.log(form)
+        const {data, status} = await API.POST('/api/auth/register', {name, email, password, password_confirm});
+        if (status > 300) {
+            this.setState({
+                errorMessage: data
+            })
+        } else {
+            this.props.store.setUser(data)
+            this.props.router.push('/')
+        }
     }
 
-    const inputHandler = e => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
+    inputHandler = e => {
+        if (e.target.type === 'checkbox') {
+            this.setState(prevState => ({
+                rememberUser: !prevState.rememberUser,
+            }));
+        }  else {
+            this.setState({
+                [e.target.name]: e.target.value,
+            });
+        }
+    };
+
+    snackbarCloseHandler = () => {
+        this.setState({
+            errorMessage: '',
         })
     }
 
-    const checkboxHandler = e => {
-        setRememberUser(!rememberUser)
-    }
-
-    return (
-        <Components.Layout>
-            <div className="wrapper">
-                <div className="main">
-                    <Paper className="paper">
-                        <Link href="/">
-                            <Avatar className="avatar">
-                                <FaMedium />
-                            </Avatar>
-                        </Link>
-                        <Typography component="h1" variant="h5">
-                            Register
-                        </Typography>
-                        <form className="form" onSubmit={submitHandler}>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel>Name</InputLabel>
-                                <Input value={form.name} name="name" autoFocus onChange={inputHandler}/>
-                            </FormControl>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel>Public name</InputLabel>
-                                <Input value={form.public_name} name="public_name" onChange={inputHandler}/>
-                            </FormControl>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel>Email</InputLabel>
-                                <Input value={form.email} name="email" onChange={inputHandler}/>
-                            </FormControl>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel>Password</InputLabel>
-                                <Input value={form.password} name="password" type="password" id="password" onChange={inputHandler}/>
-                            </FormControl>
-                            <FormControl margin="normal" required fullWidth>
-                                <InputLabel>Confirm password</InputLabel>
-                                <Input value={form.confirm_password} name="confirm_password" type="password"  onChange={inputHandler}/>
-                            </FormControl>
-                            <FormControlLabel control={<Checkbox checked={rememberUser} color="primary" />} label="Remember me" onChange={checkboxHandler}/>
-                            <Button type="submit" fullWidth variant="contained" color="primary" className="submit">
+    render() {
+        const {name, email, password, password_confirm, rememberUser, errorMessage} = this.state;
+        const {classes} = this.props;
+        return (
+            <Components.Layout>
+                <div className={classes.wrapper}>
+                    <div className={classes.main}>
+                        <Paper className={classes.paper}>
+                            <NextLink href="/">
+                                <Avatar className={classes.avatar}>
+                                    <FaMedium />
+                                </Avatar>
+                            </NextLink>
+                            <Typography component="h1" variant="h5">
                                 Register
-                            </Button>
-                        </form>
-                        <Link href="/login">
-                            <a>
-                                <Typography className="text">Login with existed account</Typography>
-                            </a>
-                        </Link>
-                    </Paper>
+                            </Typography>
+                            <form onSubmit={this.submitHandler}>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel>Name</InputLabel>
+                                    <Input value={name} name="name" autoFocus onChange={this.inputHandler} />
+                                </FormControl>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel>Email</InputLabel>
+                                    <Input value={email} name="email" onChange={this.inputHandler} />
+                                </FormControl>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel>Password</InputLabel>
+                                    <Input value={password} name="password" type="password" id="password" onChange={this.inputHandler} />
+                                </FormControl>
+                                <FormControl margin="normal" required fullWidth>
+                                    <InputLabel>Confirm password</InputLabel>
+                                    <Input value={password_confirm} name="password_confirm" type="password" onChange={this.inputHandler} />
+                                </FormControl>
+                                <FormControlLabel control={<Checkbox checked={rememberUser} color="primary" />} label="Remember me" onChange={this.inputHandler} />
+                                <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
+                                    Register
+                                </Button>
+                            </form>
+                            <NextLink href="/login">
+                                <Link >
+                                    <Typography className={classes.text}>Login with existed account</Typography>
+                                </Link>
+                            </NextLink>
+                        </Paper>
+                    </div>
                 </div>
-            </div>
-            {styles()}
-        </Components.Layout>
-    );
-};
+                <Components.Snackbar message={errorMessage} handleClose={this.snackbarCloseHandler}/>
+            </Components.Layout>
+        );
+    }
+}
 
-export default Register;
+const styles = themes => ({
+    wrapper: {
+        height: '100%',
+        maxWidth: '1400px',
+        margin: '0 auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    main: {
+        width: '400px',
+        margin: '3rem 0 auto',
+    },
+    paper: {
+        display: 'flex',
+        flexFlow: 'column nowrap',
+        alignItems: 'center',
+        padding: '2rem 3rem',
+    },
+    avatar: {
+        margin: '0.5rem',
+        backgroundColor: themes.palette.text.primary,
+        cursor: 'pointer',
+    },
+    submit: {
+        marginTop: '2rem',
+    },
+    text: {
+        cursor: 'pointer',
+        marginTop: '2rem',
+    }
+})
+
+export default withStyles(styles)(withRouter(Register));

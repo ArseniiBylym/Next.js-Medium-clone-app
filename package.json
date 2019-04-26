@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server/server.js --watch server",
-    "start": "next server/server.js",
+    "start": "node server/server.js",
     "build": "next build",
     "deploy": "now --public"
   },
@@ -14,7 +14,9 @@
   "license": "ISC",
   "dependencies": {
     "@material-ui/core": "^3.9.3",
+    "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
+    "classnames": "^2.2.6",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.4",
     "cors": "^2.8.5",
@@ -24,15 +26,23 @@
     "helmet": "^3.16.0",
     "jimp": "^0.6.1",
     "jsonwebtoken": "^8.5.1",
+    "jss": "^9.8.7",
+    "mobx": "^5.9.4",
+    "mobx-react": "^5.4.3",
     "mongoose": "^5.5.2",
     "multer": "^1.4.1",
     "next": "^8.0.4",
+    "next-nprogress": "^1.4.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-icons": "^3.6.1"
+    "react-icons": "^3.6.1",
+    "react-jss": "^8.6.1",
+    "styled-jsx": "^3.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-decorators": "^7.4.0",
     "nodemon": "^1.18.11"
   }
 }

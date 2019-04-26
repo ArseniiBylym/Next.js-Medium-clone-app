@@ -1,17 +1,17 @@
 import Components from './../components/index';
 
-const Home = props => {
+const Article = props => {
     return (
         <Components.Layout>
             <div className="wrapper">
-               Home
+               Article
             </div>
         </Components.Layout>
     );
 };
 
-Home.getInitialProps = ({req}) => {
+Article.getInitialProps = ({req}) => {
    return {};
 }
 
-export default Home;
+export default Article;

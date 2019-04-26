@@ -7,13 +7,13 @@ const cors = require('cors');
 const expressValidator = require('express-validator')
 const cookieParser = require('cookie-parser');
 
-const CONFIG = require('../config/env');
+const CONFIG = require('../config');
 const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
 const articlesRoutes = require('./routes/articles.routes');
 
-const port = CONFIG.port;
-const dev = CONFIG.node_env !== 'production';
+const port = CONFIG.server.PORT;
+const dev = CONFIG.server.NODE_ENV !== 'production';
 const app = next({dev});
 const handle = app.getRequestHandler();
 
@@ -36,6 +36,15 @@ app.prepare().then(() => {
         handle(req, res);
     });
 
+    server.get("/profile/:userId", (req, res) => {
+        const routeParams = Object.assign({}, req.params, req.query);
+        return app.render(req, res, "/profile", routeParams);
+    })
+    server.get("/article/:articleId", (req, res) => {
+        const routeParams = Object.assign({}, req.params, req.query);
+        return app.render(req, res, "/article", routeParams);
+    })
+
     // Custom api routes
     server.use('/api/auth', authRoutes);
     server.use('/api/users', usersRoutes);
@@ -55,9 +64,9 @@ app.prepare().then(() => {
 
     const mongoseOptions = {
         useNewUrlParser: true,
-        useCreateIndex: CONFIG.node_env === 'development'
+        useCreateIndex: CONFIG.server.NODE_ENV === 'development'
     }
-    mongoose.connect(CONFIG.mongo_db_uri, mongoseOptions)
+    mongoose.connect(CONFIG.server.MONGO_DB_URI, mongoseOptions)
         .then(() => {
             server.listen(port, error => {
                 if (error) throw error;

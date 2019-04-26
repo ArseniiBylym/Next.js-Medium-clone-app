@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {withStyles} from '@material-ui/core/styles';
+import {withRouter} from 'next/router';
+
 import NextLink from 'next/link';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -14,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import {FaMedium} from 'react-icons/fa';
 import {inject, observer} from 'mobx-react';
 import Components from './../components';
+import API from '../api';
 
 const defaultForm = {
     name: '',
@@ -37,21 +40,22 @@ class Register extends Component {
             this.setState({
                 errorMessage: data
             })
+        } else {
+            this.props.store.setUser(data)
+            this.props.router.push('/')
         }
     }
 
     inputHandler = e => {
-        this.setState({
-            ...this.state,
-            [e.target.name]: e.target.value,
-        })
-    }
-
-    checkboxHandler = e => {
-        this.setState(prevState => ({
-            ...this.state,
-            rememberUser: !prevState.rememberUser,
-        }));
+        if (e.target.type === 'checkbox') {
+            this.setState(prevState => ({
+                rememberUser: !prevState.rememberUser,
+            }));
+        }  else {
+            this.setState({
+                [e.target.name]: e.target.value,
+            });
+        }
     };
 
     snackbarCloseHandler = () => {
@@ -93,7 +97,7 @@ class Register extends Component {
                                     <InputLabel>Confirm password</InputLabel>
                                     <Input value={password_confirm} name="password_confirm" type="password" onChange={this.inputHandler} />
                                 </FormControl>
-                                <FormControlLabel control={<Checkbox checked={rememberUser} color="primary" />} label="Remember me" onChange={this.checkboxHandler} />
+                                <FormControlLabel control={<Checkbox checked={rememberUser} color="primary" />} label="Remember me" onChange={this.inputHandler} />
                                 <Button type="submit" fullWidth variant="contained" color="primary" className={classes.submit}>
                                     Register
                                 </Button>
@@ -145,4 +149,4 @@ const styles = themes => ({
     }
 })
 
-export default withStyles(styles)(Register);
+export default withStyles(styles)(withRouter(Register));

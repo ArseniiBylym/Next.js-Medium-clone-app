@@ -26,7 +26,7 @@ exports.login = async (req, res, next) => {
         if (!isPasswordMatches) {
             res.status(400).json('Wrong password');
         }
-        const token = jwt.sign({email: user.email, _id: user._id}, CONFIG.jwt_secret, {expiresIn: CONFIG.jwt_expiration_time});
+        const token = jwt.sign({email: user.email, _id: user._id, name: user.name, avatar: user.avatar}, CONFIG.jwt_secret, {expiresIn: CONFIG.jwt_expiration_time});
 
         res.cookie('token', `Bearer ${token}`, {httpOnly: true});
         res.status(201).json(user.toWebShort());

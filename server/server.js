@@ -11,6 +11,7 @@ const CONFIG = require('../config/env');
 const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
 const articlesRoutes = require('./routes/articles.routes');
+const {getUser} = require('./middlewares/user');
 
 const port = CONFIG.port;
 const dev = CONFIG.node_env !== 'production';
@@ -28,6 +29,8 @@ app.prepare().then(() => {
     server.use(expressValidator());
     server.use(cookieParser());
 
+    // server.use(getUser);
+
     // Handle Next.js's requests
     server.get("/_next/*", (req, res) => {
         handle(req, res);
@@ -35,6 +38,15 @@ app.prepare().then(() => {
     server.get("/static/*", (req, res) => {
         handle(req, res);
     });
+
+    server.get("/profile/:userId", (req, res) => {
+        const routeParams = Object.assign({}, req.params, req.query);
+        return app.render(req, res, "/profile", routeParams);
+    })
+    server.get("/article/:articleId", (req, res) => {
+        const routeParams = Object.assign({}, req.params, req.query);
+        return app.render(req, res, "/article", routeParams);
+    })
 
     // Custom api routes
     server.use('/api/auth', authRoutes);

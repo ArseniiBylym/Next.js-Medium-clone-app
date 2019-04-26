@@ -8,12 +8,23 @@ import NProgress from "next-nprogress/component";
 import {initializeStore} from '../store';
 import {Provider} from 'mobx-react';
 import getPageContext from '../lib/getPageContext';
+import getUserFromToken from '../lib/getUserFromToken';
 
 class MyApp extends App {
     static async getInitialProps(appContext) {
         // Get or Create the store with `undefined` as initialState
         // This allows you to set a custom default initialState
         const mobxStore = initializeStore();
+
+        // If reques contains token, then parse token and seed user data to the mobx store
+        // Browser no need to sed session request if token exists
+        if (appContext.ctx.req) {
+            const user = getUserFromToken(appContext.ctx.req);
+            if (user) {
+                mobxStore.user = user;
+                mobxStore.userFetched = true;
+            }
+        }
         // Provide the store to getInitialProps of pages
         appContext.ctx.mobxStore = mobxStore;
 
@@ -60,7 +71,7 @@ class MyApp extends App {
                         </Provider>
                     </MuiThemeProvider>
                 </JssProvider>
-                <NProgress spinner={false}/>
+                <NProgress color='#911117' spinner={false}/>
             </Container>
         );
     }

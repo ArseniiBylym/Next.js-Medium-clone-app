@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { withRouter } from 'next/router';
+import {withRouter} from 'next/router';
 import {withStyles} from '@material-ui/core/styles';
 import NextLink from 'next/link';
 import AppBar from '@material-ui/core/AppBar';
@@ -13,10 +13,14 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import {FaMedium} from 'react-icons/fa';
 import {inject, observer} from 'mobx-react';
+import Components from '../components';
+import API from '../api';
+
 
 @inject('store')
 @observer
 class Navbar extends Component {
+
     componentDidMount = async () => {
         const {store} = this.props;
         if (!store.userFetched) {
@@ -31,14 +35,25 @@ class Navbar extends Component {
                 <NextLink href="/register">
                     <Button color="inherit">Register</Button>
                 </NextLink>
-            )
-        } 
+            );
+        }
         return (
             <NextLink href="/login">
                 <Button color="inherit">Login</Button>
             </NextLink>
-        )
-    }
+        );
+    };
+
+    logoutHandler = async () => {
+        console.log('Logout')
+        const {data, status} = await API.GET('/api/auth/logout');
+        if (status >= 300) {
+            return 
+        } else {
+            this.props.store.setUser(null)
+            this.props.router.push('/')
+        }
+    };
 
     render() {
         const {classes} = this.props;
@@ -47,7 +62,7 @@ class Navbar extends Component {
                 <AppBar position="static">
                     <Toolbar>
                         <NextLink href="/">
-                            <Link button title="Home" className={classes.home_link} >
+                            <Link title="Home" className={classes.home_link}>
                                 <Avatar className={classes.avatar}>
                                     <FaMedium />
                                 </Avatar>
@@ -57,7 +72,7 @@ class Navbar extends Component {
                             </Link>
                         </NextLink>
                         <List component="nav" className={classes.nav_list}>
-                            <NextLink href="articles">
+                            <NextLink href="/articles">
                                 <ListItem button className={classes.nav_item}>
                                     <Link title="Articles">
                                         <ListItemText
@@ -70,7 +85,7 @@ class Navbar extends Component {
                                     </Link>
                                 </ListItem>
                             </NextLink>
-                            <NextLink href="authors">
+                            <NextLink href="/authors">
                                 <ListItem button className={classes.nav_item}>
                                     <Link title="Authors">
                                         <ListItemText
@@ -85,10 +100,10 @@ class Navbar extends Component {
                             </NextLink>
                         </List>
                         {this.props.store.user ? (
-                            <NextLink href="/">
-                                <Button color="inherit">Logout</Button>
-                            </NextLink>
-                        ) : this.getAuthButton() }
+                            <Components.UserNav user={this.props.store.user} logoutHandler={this.logoutHandler} />
+                        ) : (
+                            this.getAuthButton()
+                        )}
                     </Toolbar>
                 </AppBar>
             </>

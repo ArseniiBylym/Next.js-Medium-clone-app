@@ -7,7 +7,9 @@ const Layout = ({classes, children}) => {
         <div className={classes.root}>
             <div className={classes.wrapper}>
                 <Components.Navbar />
-                {children}
+                <div className={classes.grow}>
+                    {children}
+                </div>
             </div>
         </div>
     );
@@ -22,11 +24,16 @@ const styles = {
         background: '#e3e3e3',
     },
     wrapper: {
-        maxWidth: '1400px',
-        marginTop: 0,
-        marginBottom: 0,
-        marginLeft: 'auto',
-        marginRight: 'auto'
+        height: '100vh',
+        margin: '0 auto',
+        display: 'flex',
+        flexFlow: 'column'
+    },
+    grow: {
+        flexGrow: 1,
+        display: 'flex',
+        flexFlow: 'column',
+        overflow: 'auto',
     }
 }
 

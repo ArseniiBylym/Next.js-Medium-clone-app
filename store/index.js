@@ -18,9 +18,14 @@ class Store {
         const {data, status} = await API.GET('/api/auth/session');
         console.log(status)
         if (status < 300) {
+            console.log(data);
             this.user = data;
         }
         this.userFetched = true;
+    }
+
+    @action setUser = (user) => {
+        this.user = user;
     }
 }
 

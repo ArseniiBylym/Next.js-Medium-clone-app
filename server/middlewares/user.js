@@ -1,5 +1,6 @@
 const multer = require('multer');
 const jimp = require('jimp');
+const jwt = require('jsonwebtoken');
 
 exports.uploadAvatar = multer({
     storage: multer.memoryStorage(),
@@ -24,3 +25,19 @@ exports.resizeAvatar = async (req, res, next) => {
     await image.write(`./${req.body.avatar}`);
     next();
 };
+
+exports.getUser = async (req, res, next) => {
+    console.log('inside getUser')
+    console.log(req.cookies)
+    const token = req.cookies.token ? req.cookies.token.split(' ')[1] : null;
+    if (!token) {
+        return next();
+    }
+    try {
+        const decodedToken = jwt.verify(token, CONFIG.jwt_secret);
+        req.user = decodedToken;
+        next();
+    } catch (error) {
+        next();
+    }
+}

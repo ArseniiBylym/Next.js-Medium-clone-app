@@ -8,6 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import {withStyles} from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import {stringToTags} from '../lib/functions';
 
 
 const defaultForm = {
@@ -44,7 +45,8 @@ const NewArticle = ({classes, router}) => {
     const submitHandler = async e => {
         setSending(true)
         e.preventDefault();
-        const data = {...form};
+        const data = {...form, tags: stringToTags(form.tags)};
+        console.log(data)
         sendData(data)
     };
 

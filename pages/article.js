@@ -9,9 +9,11 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import NextLink from 'next/link';
 import IconButton from '@material-ui/core/IconButton';
+import Chip from '@material-ui/core/Chip';
 import {getDate} from './../lib/functions';
 import {inject, observer} from 'mobx-react';
 import {MdModeEdit} from 'react-icons/md';
+import {tagsToString, stringToTags} from '../lib/functions';
 
 @inject('store')
 @observer
@@ -28,11 +30,11 @@ class Article extends Component {
         });
     };
 
-    submitHandler = async (e) => {
-        e.preventDefault()
-        const {_id, title, subTitle, text, image} = this.state;
+    submitHandler = async e => {
+        e.preventDefault();
+        const {_id, title, subTitle, text, image, tags} = this.state;
         this.setState({sending: true});
-        const {data, status} = await API.PUT(`/api/articles/${_id}`, {title, subTitle, text, image});
+        const {data, status} = await API.PUT(`/api/articles/${_id}`, {title, subTitle, text, image, tags: stringToTags(tags)});
         if (status >= 300) {
             console.log(data);
         } else {
@@ -45,42 +47,55 @@ class Article extends Component {
         }
     };
 
-    editModeToggle = () => {
-        this.setState({editMode: true});
-    };
-
     getEditButton = () => {
         return this.props.store.isCurrentUserOwner(this.state.author._id) ? (
-            <IconButton onClick={this.editModeToggle}>
+            <IconButton
+                onClick={() => {
+                    this.setState({editMode: true});
+                }}
+            >
                 <MdModeEdit />
             </IconButton>
         ) : null;
     };
 
+    getTags = () => {
+        const {tags} = this.state;
+        const {classes} = this.props;
+        if (!tags || tags.length === 0) return null;
+        return (
+            <Grid container direction="row" spacing={16} className={classes.tags}>
+                {tags.map(tag => (
+                    <Grid item><Chip key={tag} label={tag} classes={{root: classes.tag_chip, label: classes.tag_chip_label}} /></Grid>
+                ))}
+            </Grid>
+        )
+    }
+
     returnHandler = () => {
         this.setState({
             ...this.props.data,
             editMode: false,
-            sending: false
-        })
-    }
+            sending: false,
+        });
+    };
 
     render() {
         const {classes} = this.props;
-        const {_id, title, subTitle, text, image, author, claps, comments, createdAt, editMode} = this.state;
+        const {_id, title, subTitle, text, image, author, claps, comments, createdAt, editMode, tags} = this.state;
+        console.log(this.state);
         return (
             <Components.Layout>
                 <Paper className={classes.wrapper}>
                     {editMode ? (
-                        <Components.ArticleForm {...this.state} inputHandler={this.inputHander} submitHandler={this.submitHandler} returnHandler={this.returnHandler}/>
+                        <Components.ArticleForm {...this.state} tags={typeof tags === 'string' ? tags : tagsToString(tags)} inputHandler={this.inputHander} submitHandler={this.submitHandler} returnHandler={this.returnHandler} />
                     ) : (
                         <div className={classes.container}>
                             <Grid container alignItems="center" justify="space-between" className={classes.title}>
-                            <Typography variant="h3">
-                                {title}
-                            </Typography>
-                            {this.getEditButton()}
+                                <Typography variant="h3">{title}</Typography>
+                                {this.getEditButton()}
                             </Grid>
+                            {this.getTags()}
                             <img src={image} className={classes.image} />
                             <div className={classes.secondary_container}>
                                 <Typography gutterBottom variant="h5" align="center" className={classes.subTitle}>
@@ -134,10 +149,16 @@ const styles = theme => ({
     },
     title: {
         color: theme.palette.text.primary_hover,
-        paddingBottom: '2rem',
+        paddingBottom: '1rem',
     },
     subTitle: {
         margin: '2rem auto',
+    },
+    tags: {
+        marginBottom: '1rem',
+    },
+    tag_chip_label: {
+        textTransform: 'capitalize',
     },
     text: {},
     image: {
@@ -148,7 +169,6 @@ const styles = theme => ({
         display: 'flex',
         marginRight: '2rem',
         cursor: 'pointer',
-
     },
     article_info: {
         padding: '2rem',

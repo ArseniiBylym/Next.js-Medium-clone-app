@@ -2,7 +2,7 @@ const Article = require('../models/Article.model');
 const User = require('../models/User.model');
 
 exports.getArticles = async (req, res, next) => {
-    const articles = await Article.find().select('-text -comments').populate('author', '_id name avatar');
+    const articles = await Article.find().select('-text -comments').sort({createdAt: -1}).populate('author', '_id name avatar');
     res.status(200).json(articles);
 }
 
@@ -22,18 +22,25 @@ exports.postArticle = async (req, res, next) => {
 exports.getArticle = async (req, res, next) => {
     const {articleId} = req.params;
     const article = await Article.findById(articleId)
+        .populate('author', '_id name avatar')
+        .populate('comments.author', '_id name avatar')
+        .populate('claps', '_id name avatar');
     res.status(200).json(article)
 }
 
 exports.updateArticle = async (req, res, next) => {
     console.log(req.body)
     const {articleId} = req.params;
-    const updatedArticle = await Article.findOneAndUpdate(
+    const article = await Article.findOneAndUpdate(
         {_id: articleId},
         {$set: req.body},
         {new: true, runValidators: true},
     )
-    res.status(200).json(updatedArticle);
+        .populate('author', '_id name avatar')
+        .populate('comments.author', '_id name avatar')
+        .populate('claps', '_id name avatar');
+        console.log(article)
+    res.status(200).json(article);
 }
 
 exports.deleteArticle = async (req, res, next) => {
@@ -62,21 +69,25 @@ exports.clapToArticle = async (req, res, next) => {
 
 exports.addComment = async (req, res, next) => {
     const {articleId, text} = req.body;
-    const updatedArticle = await Article.findOneAndUpdate(
+    const article = await Article.findOneAndUpdate(
         {_id: articleId},
         {$push: {comments: {author: req.user._id, text}}},
         {new: true, runValidators: true},
     )
-    res.status(200).json(updatedArticle);
+    await Article.populate(article, {
+        path: 'comments.author',
+        select: '_id name avatar'
+    })
+    res.status(200).json(article.comments);
 }
 
 exports.removeComment = async (req, res, next) => {
     const {commentId} = req.params;
     const {articleId} = req.body;
-    const updatedArticle = await Article.findOneAndUpdate(
+    const article = await Article.findOneAndUpdate(
         {_id: articleId},
         {$pull: {comments: {_id: commentId}}},
         {new: true, runValidators: true},
     )
-    res.status(200).json(updatedArticle);
+    res.status(200).json(commentId);
 }

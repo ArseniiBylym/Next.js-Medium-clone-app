@@ -64,14 +64,14 @@ const styles = theme => ({
         margin: '0 15px',
     },
     user_name: {
-        color: theme.palette.text.secondary
+        color: theme.palette.text.light
     },
     menu_button: {
         padding: 10,
         margin: '0 10px'
     },
     menu_icon: {
-        color: theme.palette.text.secondary
+        color: theme.palette.text.light
     },
     menu_body: {
     },

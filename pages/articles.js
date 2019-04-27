@@ -22,7 +22,7 @@ const Articles = ({classes, data}) => {
                             <Grid container alignItems="center" direction="row" className={classes.article_info}>
                                 <NextLink href={`/profile/${item.author._id}`}>
                                     <Link title={item.author.name}>
-                                        <Grid item alignItems="center" className={classes.user_info}>
+                                        <Grid container alignItems="center" className={classes.user_info}>
                                             <Avatar src={item.author.avatar} className={classes.avatar} />
                                             <Typography variant="body1" className={classes.user_name}>
                                                 {item.author.name}
@@ -36,13 +36,13 @@ const Articles = ({classes, data}) => {
                             </Grid>
                             <NextLink href={`/article/${item._id}`}>
                                 <Link className={classes.article_link}>
-                                    <Typography variant="h4" gutterBottom>
+                                    <Typography variant="h4" gutterBottom color="textPrimary">
                                         {item.title}
                                     </Typography>
                                 </Link>
                             </NextLink>
                             {item.subTitle && (
-                                <Typography gutterBottom variant="h6">
+                                <Typography gutterBottom variant="h6" color="textSecondary">
                                     {item.subTitle}
                                 </Typography>
                             )}
@@ -60,11 +60,11 @@ const Articles = ({classes, data}) => {
     return (
         <Components.Layout>
             <Paper className={classes.wrapper}>
-                <Typography gutterBottom variant="h3" align="center">
+                <Typography gutterBottom variant="h3" align="center" color="textPrimary">
                     Articles
                 </Typography>
-                <Grid container spacing={16} direction="column">
-                    {data.length ? articlesList() : <Typography variant="h6">Articles list is empty now</Typography>}
+                <Grid container spacing={16} direction="column" >
+                    {data.length ? articlesList() : <Typography variant="h6" color="textSecondary">Articles list is empty now</Typography>}
                 </Grid>
             </Paper>
         </Components.Layout>
@@ -88,6 +88,9 @@ const styles = theme => ({
     },
     paper: {
         overflow: 'hidden',
+        margin: '1rem 0',
+        // maxWidth: '800px',
+        // margin: '0 auto',
     },
     article: {
         height: '220px',
@@ -100,7 +103,8 @@ const styles = theme => ({
         textDecoration: 'none',
         cursor: 'pointer',
         '&:hover': {
-            color: theme.palette.text.secodary
+            color: theme.palette.text.secodary,
+            textDecoration: 'none',
         }
     },
     info: {

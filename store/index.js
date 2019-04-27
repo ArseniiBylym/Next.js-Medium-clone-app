@@ -27,6 +27,12 @@ class Store {
     @action setUser = (user) => {
         this.user = user;
     }
+
+    isCurrentUserOwner = (authorId) => {
+        if (!this.user) return false;
+        if (authorId !== this.user._id) return false;
+        return true;
+    }
 }
 
 let store = null;

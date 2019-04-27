@@ -126,7 +126,7 @@ const styles = themes => ({
     },
     nav_item_text: {
         padding: 0,
-        color: themes.palette.text.secondary,
+        color: themes.palette.text.light,
         textTransform: 'uppercase',
     },
     home: {

@@ -20,11 +20,23 @@ const userSchema = new Schema(
     }
 )
 
+userSchema.statics.findOneByEmail = function (email, cb) {
+    return this.findOne({email: email}, cb)
+}
+
 userSchema.pre('findById', function (next) {
     this.populate('articles', '_id title subTitle claps image');
     this.populate('claps', '_id title subTitle claps image');
     this.populate('following', '_id name avatar');
     this.populate('followers', '_id name avatar');
+    next()
+})
+userSchema.pre('findOneByEmail', function (next) {
+    this.populate('articles', '_id title subTitle claps image');
+    this.populate('claps', '_id title subTitle claps image');
+    this.populate('following', '_id name avatar');
+    this.populate('followers', '_id name avatar');
+    next()
 })
 
 userSchema.methods.toWeb = function(){

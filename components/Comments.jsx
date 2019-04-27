@@ -1,6 +1,6 @@
 import {Component} from 'react';
 import NextLink from 'next/link';
-import Link from '@material-ui/core/link';
+import Link from '@material-ui/core/Link';
 import {inject, observer} from 'mobx-react';
 import {withStyles} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';

@@ -21,13 +21,6 @@ import API from '../api';
 @observer
 class Navbar extends Component {
 
-    componentDidMount = async () => {
-        const {store} = this.props;
-        if (!store.userFetched) {
-            store.getSession();
-        }
-    };
-
     getAuthButton = () => {
         const {route} = this.props.router;
         if (route === '/login') {

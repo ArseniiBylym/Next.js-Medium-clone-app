@@ -18,7 +18,11 @@ exports.session = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         const {email, password} = req.body;
-        const user = await User.findOne({email});
+        const user = await User.findOne({email})
+            .populate('articles', '_id title image createdAt')
+            .populate('claps', '_id title image createdAt')
+            .populate('following', '_id name avatar')
+            .populate('followers', '_id name avatar');
         if (!user) {
             res.status(400).json('Wrong email');
         }
@@ -26,10 +30,11 @@ exports.login = async (req, res, next) => {
         if (!isPasswordMatches) {
             res.status(400).json('Wrong password');
         }
-        const token = jwt.sign({email: user.email, _id: user._id, name: user.name, avatar: user.avatar}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
+        // const token = jwt.sign({email: user.email, _id: user._id, name: user.name, avatar: user.avatar}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
+        const token = jwt.sign({_id: user._id}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
 
         res.cookie('token', `Bearer ${token}`, {httpOnly: true});
-        res.status(201).json(user.toWebShort());
+        res.status(201).json(user.toWeb());
     } catch (error) {
         next(error);
     }
@@ -40,10 +45,11 @@ exports.register = async (req, res, next) => {
         const {name, email, password} = req.body;
         const encryptedPassword = await bcrypt.hash(password, 10);
         const user = await new User({name, email, password: encryptedPassword}).save();
-        const token = jwt.sign({email: user.email, _id: user._id.toString()}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
+        // const token = jwt.sign({email: user.email, _id: user._id.toString()}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
+        const token = jwt.sign({_id: user._id.toString()}, CONFIG.server.JWT_SECRET_KEY, {expiresIn: CONFIG.server.JWT_EXPIRATION_TIME});
 
         res.cookie('token', `Bearer ${token}`, {httpOnly: true});
-        res.status(201).json(user.toWebShort());
+        res.status(201).json(user.toWeb());
     } catch (error) {
         next(error);
     }

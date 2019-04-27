@@ -13,10 +13,12 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
 import {withStyles} from '@material-ui/core/styles';
-import {MdAssignment, MdFavoriteBorder, MdPeople, MdRecordVoiceOver, MdMailOutline, MdDateRange} from 'react-icons/md';
+import {MdAssignment, MdFavoriteBorder, MdPeople, MdRecordVoiceOver, MdMailOutline, MdDateRange, MdModeEdit} from 'react-icons/md';
 import {getDate} from '../lib/functions';
 import {inject, observer} from 'mobx-react';
+
 
 function TabContainer(props) {
     return (
@@ -32,6 +34,8 @@ class Profile extends Component {
     state = {
         user: this.props.user,
         tabValue: 0,
+        editMode: false,
+        sending: false
     };
 
     tabValueHandler = (e, tabValue) => {
@@ -84,9 +88,41 @@ class Profile extends Component {
             </Button>
         );
     };
+
+    inputHandler = e => {
+        this.setState({
+            user: {
+                ...this.state.user,
+                [e.target.name]: e.target.value
+            }
+        })
+    }
+
+    updateHandler = async () => {
+        this.setState({sending: true})
+        const {_id, name, email, info} = this.state.user;
+        const {data, status} = await API.PUT(`/api/users/${_id}`, {name, email, info})
+        if (status >= 300) {
+            console.log(data)
+        } else {
+            console.log(data)
+            this.setState({
+                user: data, 
+                sending: false,
+                editMode: false,
+            })
+            this.props.store.setUser(data);
+        }
+        console.log(this.state.user)
+    }
+
+    clearHandler = () => {
+        this.setState({user: this.props.user})
+    }
+
     render() {
         const {classes} = this.props;
-        const {tabValue, user} = this.state;
+        const {tabValue, user, editMode, sending} = this.state;
         return (
             <Components.Layout>
                 <Paper className={classes.wrapper}>
@@ -104,8 +140,11 @@ class Profile extends Component {
                                             <Avatar src={user.avatar} className={classes.avatar} />
                                         </Grid>
                                         <Grid item xs={7} className={classes.user_details}>
-                                            <Typography gutterBottom variant="h5">
+                                            <Typography gutterBottom variant="h4" color="textPrimary">
                                                 {user.name}
+                                            </Typography>
+                                            <Typography gutterBottom variant="h5" color="textSecondary">
+                                                {user.info}
                                             </Typography>
                                             <Typography gutterBottom variant="body1">
                                                 <MdMailOutline /> {user.email}
@@ -115,11 +154,31 @@ class Profile extends Component {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={2} container alignItems="center" justify="flex-end">
+                                            {this.props.store.isCurrentUserOwner(user._id) && (
+                                                <IconButton onClick={() => {this.setState(prevState => ({editMode: !prevState.editMode}))}}>
+                                                    <MdModeEdit />
+                                                </IconButton>
+                                            )
+                                            }
                                             {this.isAlreadyFollowed()}
                                         </Grid>
                                     </Grid>
                                 </CardContent>
                                 <Divider />
+                                {editMode && (
+                                    <>
+                                    <Components.ProfileEdit 
+                                        name={user.name}
+                                        email={user.email}
+                                        info={user.info}
+                                        sending={sending}
+                                        inputHandler={this.inputHandler}
+                                        updateHandler={this.updateHandler}    
+                                        clearHandler={this.clearHandler}
+                                    />
+                                    <Divider />
+                                    </>
+                                )}
                                 <CardActions>
                                     <Grid container direction="column">
                                         <Grid item>

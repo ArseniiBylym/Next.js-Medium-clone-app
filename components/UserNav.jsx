@@ -47,7 +47,7 @@ const UserNav = props => {
                     </IconButton>
                     <Menu classes={{paper: classes.menu_body}}open={menu} onClose={() => setMenu(false)} id="user-menu" anchorEl={anchorEl}>
                         <MenuItem className={classes.menu_item} onClick={() => props.router.push('/new-article')}>New article</MenuItem>
-                        <MenuItem className={classes.menu_item} onClick={() => props.router.push('/profile')}>Profile</MenuItem>
+                        <MenuItem className={classes.menu_item} onClick={() => props.router.push(`/profile/${props.user._id}`)}>Profile</MenuItem>
                         <MenuItem className={classes.menu_item} onClick={openModal}>Logout</MenuItem>
                     </Menu> 
                 </Grid>

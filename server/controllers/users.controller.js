@@ -20,12 +20,19 @@ exports.getUser = async (req, res, next) => {
 }
 
 exports.updateUser = async (req, res, next) => {
-    const updatedUser = await User.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
         {_id: req.params.userId},
         {$set: req.body},
         {new: true, runValidators: true},
     )
-    res.status(202).json(updatedUser);
+        .populate('articles', '_id title image createdAt')
+        .populate('claps', '_id title image createdAt')
+        .populate('following', '_id name avatar')
+        .populate('followers', '_id name avatar');
+    if (!user) {
+        return res.status(400).json('User not found');
+    }
+    res.status(202).json(user);
 }
 
 exports.deleteUser = async (req, res, next) => {

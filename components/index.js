@@ -6,6 +6,7 @@ import UserNav from './UserNav';
 import Comments from './Comments';
 import AddComment from './AddComment';
 import ArticleForm from './ArticleForm';
+import ProfileEdit from './ProfileEdit';
 
 const Components = {
     Layout,
@@ -16,6 +17,7 @@ const Components = {
     Comments,
     AddComment,
     ArticleForm,
+    ProfileEdit,
 }
 
 export default Components;

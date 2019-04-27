@@ -33,6 +33,11 @@ class Store {
         if (authorId !== this.user._id) return false;
         return true;
     }
+
+    isFollowed = (profileUser) => {
+        const isFollowed = profileUser.followers.find(item => item._id === this.user._id)
+        return !!isFollowed;
+    }
 }
 
 let store = null;

@@ -8,7 +8,11 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getUser = async (req, res, next) => {
     const _id = req.params.userId;
-    const user = await User.findById(_id);
+    const user = await User.findById(_id)
+        .populate('articles', '_id title image createdAt')
+        .populate('claps', '_id title image createdAt')
+        .populate('following', '_id name avatar')
+        .populate('followers', '_id name avatar');
     if (!user) {
         return res.status(400).json('User not found');
     }

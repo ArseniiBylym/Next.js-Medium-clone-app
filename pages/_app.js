@@ -57,7 +57,7 @@ class MyApp extends App {
         return (
             <Container>
                 <Head>
-                    <title>Next.js app</title>
+                    <title>Meduim</title>
                 </Head>
                 {/* Wrap every page in Jss and Theme providers */}
                 <JssProvider registry={this.pageContext.sheetsRegistry} generateClassName={this.pageContext.generateClassName}>

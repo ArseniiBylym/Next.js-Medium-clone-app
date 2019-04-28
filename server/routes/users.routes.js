@@ -1,6 +1,5 @@
 const {Router} = require('express');
 const usersController = require('../controllers/users.controller');
-const validator = require('../middlewares/validator')
 const {isAuth, isOwner} = require('../middlewares/auth');
 const {uploadAvatar, resizeAvatar} = require('../middlewares/user');
 

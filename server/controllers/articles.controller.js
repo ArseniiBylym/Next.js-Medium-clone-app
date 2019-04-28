@@ -29,7 +29,6 @@ exports.getArticle = async (req, res, next) => {
 }
 
 exports.updateArticle = async (req, res, next) => {
-    console.log(req.body)
     const {articleId} = req.params;
     const article = await Article.findOneAndUpdate(
         {_id: articleId},
@@ -74,10 +73,7 @@ exports.addComment = async (req, res, next) => {
         {$push: {comments: {author: req.user._id, text}}},
         {new: true, runValidators: true},
     )
-    await Article.populate(article, {
-        path: 'comments.author',
-        select: '_id name avatar'
-    })
+        .populate('comments.author', '_id name avatar')
     res.status(200).json(article.comments);
 }
 

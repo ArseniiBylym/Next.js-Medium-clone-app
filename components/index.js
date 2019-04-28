@@ -7,6 +7,8 @@ import Comments from './Comments';
 import AddComment from './AddComment';
 import ArticleForm from './ArticleForm';
 import ProfileEdit from './ProfileEdit';
+import CardArticle from './CardArticle';
+import CardUser from './CardUser';
 
 const Components = {
     Layout,
@@ -18,6 +20,8 @@ const Components = {
     AddComment,
     ArticleForm,
     ProfileEdit,
+    CardArticle,
+    CardUser,
 }
 
 export default Components;

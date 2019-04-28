@@ -11,8 +11,6 @@ import {FaRegThumbsUp} from 'react-icons/fa';
 import {getDate} from './../lib/functions';
 
 const Articles = ({classes, data}) => {
-    console.log(data);
-
     const articlesList = () => {
         return data.map((item, i) => {
             return (

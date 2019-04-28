@@ -9,7 +9,6 @@ import {initializeStore} from '../store';
 import {Provider} from 'mobx-react';
 import getPageContext from '../lib/getPageContext';
 import getUserFromToken from '../lib/getUserFromToken';
-import axios from 'axios';
 import API from '../api';
 
 class MyApp extends App {
@@ -20,25 +19,17 @@ class MyApp extends App {
 
         // If reques contains token, then parse token and seed user data to the mobx store
         // Browser no need to sed session request if token exists
-        console.log('Inside _app ')
         if (appContext.ctx.req) {
-            console.log('Auth checking...')
             const user = getUserFromToken(appContext.ctx.req);
             if (user && !mobxStore.userFetched) {
                 const {data, status} = await API.GET(`/api/users/${user._id}`)
                 if (status >= 300) {
                     console.log(data)
                 } else {
-                    console.log(data);
                     mobxStore.user = data;
                     mobxStore.userFetched = true;
                 }
             }
-            // console.log(user);
-            // if (user) {
-            //     mobxStore.user = user;
-            //     mobxStore.userFetched = true;
-            // }
         }
         // Provide the store to getInitialProps of pages
         appContext.ctx.mobxStore = mobxStore;

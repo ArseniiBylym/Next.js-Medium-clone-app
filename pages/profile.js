@@ -48,7 +48,6 @@ class Profile extends Component {
         if (status >= 300) {
             console.log(data);
         } else {
-            console.log(data);
             this.setState({
                 user: {
                     ...this.state.user,
@@ -64,7 +63,6 @@ class Profile extends Component {
         if (status >= 300) {
             console.log(data);
         } else {
-            console.log(data);
             const filteredFollowers = this.state.user.followers.slice().filter(item => item._id !== this.props.store.user._id);
             this.setState({
                 user: {
@@ -105,7 +103,6 @@ class Profile extends Component {
         if (status >= 300) {
             console.log(data)
         } else {
-            console.log(data)
             this.setState({
                 user: data, 
                 sending: false,
@@ -113,11 +110,82 @@ class Profile extends Component {
             })
             this.props.store.setUser(data);
         }
-        console.log(this.state.user)
     }
 
     clearHandler = () => {
         this.setState({user: this.props.user})
+    }
+
+    getUserArticles = () => {
+        const {user} = this.state;
+        if (user.articles.length === 0) {
+            return (
+                <Typography align='center' variant="body1">User doesn't have his own articles yet</Typography>
+            )
+        }
+        return (
+            <Grid container direction="column" spacing={16} >
+                {user.articles.map(item => {
+                    return (
+                        <Components.CardArticle key={item._id} {...item} />
+                    )
+                })}
+            </Grid>
+        )
+    }
+
+    getUserFavorites = () => {
+        const {user} = this.state;
+        if (user.claps.length === 0) {
+            return (
+                <Typography align='center' variant="body1">User doesn't have favorite articles yet</Typography>
+            )
+        }
+        return (
+            <Grid container direction="column" spacing={16} >
+                {user.claps.map(item => {
+                    return (
+                        <Components.CardArticle key={item._id} {...item} />
+                    )
+                })}
+            </Grid>
+        )
+    }
+
+    getFollowers = () => {
+        const {user} = this.state;
+        if(user.following.length === 0) {
+            return (
+                <Typography align='center' variant="body1">User doesn't have followed users yet</Typography>
+            )
+        }
+        return (
+            <Grid container direction="column" spacing={16} >
+                {user.following.map(item => {
+                    return (
+                        <Components.CardUser key={item._id} {...item} />
+                    )
+                })}
+            </Grid>
+        )
+    }
+
+    getFollowedBy = () => {
+        const {user} = this.state;
+        if(user.followers.length === 0) {
+            return (
+                <Typography align='center' variant="body1">Nobody follows this user yet</Typography>
+            )
+        }
+        return (
+            <Grid container direction="column" spacing={16} >
+                {user.followers.map(item => {
+                    return (
+                        <Components.CardUser key={item._id} {...item} />
+                    )
+                })}
+            </Grid>
+        )
     }
 
     render() {
@@ -189,11 +257,11 @@ class Profile extends Component {
                                                 <Tab label="Followed by" icon={<MdRecordVoiceOver />} />
                                             </Tabs>
                                         </Grid>
-                                        <Grid item>
-                                            {tabValue === 0 && <TabContainer>Articles</TabContainer>}
-                                            {tabValue === 1 && <TabContainer>Favorites</TabContainer>}
-                                            {tabValue === 2 && <TabContainer>Followers</TabContainer>}
-                                            {tabValue === 3 && <TabContainer>Followed by</TabContainer>}
+                                        <Grid item className={classes.tab_content}>
+                                            {tabValue === 0 && this.getUserArticles()}
+                                            {tabValue === 1 && this.getUserFavorites()}
+                                            {tabValue === 2 && this.getFollowers()}
+                                            {tabValue === 3 && this.getFollowedBy()}
                                         </Grid>
                                     </Grid>
                                 </CardActions>
@@ -229,6 +297,9 @@ const styles = theme => ({
         width: '80px',
         height: '80px',
     },
+    tab_content: {
+        padding: '2rem',
+    }
 });
 
 Profile.getInitialProps = async props => {

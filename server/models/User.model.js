@@ -13,7 +13,6 @@ const userSchema = new Schema(
         following: [{type: Schema.Types.ObjectId, ref: 'User'}],
         followers: [{type: Schema.Types.ObjectId, ref: 'User'}],
         status: {type: String, required: true, default: 'general'},
-
     }, 
     {
         timestamps: true
@@ -27,34 +26,27 @@ userSchema.statics.findOneByEmail = function (email, cb) {
 userSchema.pre('findById', function (next) {
     this.populate('articles', '_id title subTitle claps image');
     this.populate('claps', '_id title subTitle claps image');
-    this.populate('following', '_id name avatar');
-    this.populate('followers', '_id name avatar');
-    next()
-})
-userSchema.pre('findOneByEmail', function (next) {
-    this.populate('articles', '_id title subTitle claps image');
-    this.populate('claps', '_id title subTitle claps image');
-    this.populate('following', '_id name avatar');
-    this.populate('followers', '_id name avatar');
+    this.populate('following', '_id name avatar email');
+    this.populate('followers', '_id name avatar email');
     next()
 })
 
-userSchema.methods.toWeb = function(){
+userSchema.methods.withoutPassword = function(){
     const user = this.toJSON();
     delete user.password;
     return user
 }
 
-userSchema.methods.toWebShort = function(){
-    const userData = this.toJSON();
-    const user = {
-        _id: userData._id,
-        name: userData.name,
-        email: userData.email,
-        status: userData.status,
-        avatar: userData.avatar,
-    } 
-    return user;
-}
+// userSchema.methods.toWebShort = function(){
+//     const userData = this.toJSON();
+//     const user = {
+//         _id: userData._id,
+//         name: userData.name,
+//         email: userData.email,
+//         status: userData.status,
+//         avatar: userData.avatar,
+//     } 
+//     return user;
+// }
 
 module.exports = model('User', userSchema);

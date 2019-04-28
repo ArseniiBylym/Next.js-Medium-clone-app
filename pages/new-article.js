@@ -32,12 +32,10 @@ const NewArticle = ({classes, router}) => {
     };
 
     const sendData = async newArticle => {
-        console.log(newArticle);
         const {data, status} = await API.POST('/api/articles', newArticle)
         if (status >= 300) {
             console.log(data)
         } else {
-            console.log(data);
             router.push('/articles')
         }
     }
@@ -46,7 +44,6 @@ const NewArticle = ({classes, router}) => {
         setSending(true)
         e.preventDefault();
         const data = {...form, tags: stringToTags(form.tags)};
-        console.log(data)
         sendData(data)
     };
 

@@ -38,7 +38,6 @@ class Article extends Component {
         if (status >= 300) {
             console.log(data);
         } else {
-            console.log(data);
             this.setState({
                 ...data,
                 editMode: false,
@@ -83,7 +82,6 @@ class Article extends Component {
     render() {
         const {classes} = this.props;
         const {_id, title, subTitle, text, image, author, claps, comments, createdAt, editMode, tags} = this.state;
-        console.log(this.state);
         return (
             <Components.Layout>
                 <Paper className={classes.wrapper}>

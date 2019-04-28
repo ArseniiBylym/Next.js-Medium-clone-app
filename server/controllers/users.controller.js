@@ -3,20 +3,20 @@ const Article = require('../models/Article.model');
 
 exports.getUsers = async (req, res, next) => {
     const users = await User.find();
-    res.status(200).json(users.map(user => user.toWebShort()))
+    res.status(200).json(users.map(user => user.withoutPassword()))
 }
 
 exports.getUser = async (req, res, next) => {
     const _id = req.params.userId;
     const user = await User.findById(_id)
-        .populate('articles', '_id title image createdAt')
-        .populate('claps', '_id title image createdAt')
-        .populate('following', '_id name avatar')
-        .populate('followers', '_id name avatar');
+        .populate('articles', '_id title subTitle image createdAt')
+        .populate('claps', '_id title subTitle image createdAt')
+        .populate('following', '_id name avatar email')
+        .populate('followers', '_id name avatar email');
     if (!user) {
         return res.status(400).json('User not found');
     }
-    res.status(200).json(user.toWeb());
+    res.status(200).json(user.withoutPassword());
 }
 
 exports.updateUser = async (req, res, next) => {
@@ -32,12 +32,12 @@ exports.updateUser = async (req, res, next) => {
     if (!user) {
         return res.status(400).json('User not found');
     }
-    res.status(202).json(user);
+    res.status(202).json(user.withoutPassword());
 }
 
 exports.deleteUser = async (req, res, next) => {
-    const deletedUser = await User.findOneAndDelete({_id: req.params.userId});
-    res.status(204).json(deletedUser)
+    const {_id} = await User.findOneAndDelete({_id: req.params.userId});
+    res.status(204).json(_id)
 }
 
 exports.follow = async (req, res, next) => {
@@ -55,7 +55,7 @@ exports.follow = async (req, res, next) => {
         {$addToSet: {following: followId}},
         {new: true},
     )
-    res.status(201).json(user.toWeb())
+    res.status(201).json(user.withoutPassword())
 }
 
 exports.unfollow = async (req, res, next) => {
@@ -73,7 +73,7 @@ exports.unfollow = async (req, res, next) => {
         {$pull: {following: followId}},
         {new: true},
     )
-    res.status(201).json(user.toWeb())
+    res.status(201).json(user.withoutPassword())
 }
 
 exports.addBookmark = async (req, res, next) => {
@@ -84,19 +84,19 @@ exports.addBookmark = async (req, res, next) => {
     }
     const user = await User.findOneAndUpdate(
         {_id: req.user._id},
-        {$addToSet: {bookmarks: followId}},
+        {$addToSet: {bookmarks: articleId}},
         {new: true},
     )
-    res.status(201).json(user.toWeb());
+    res.status(201).json(user.withoutPassword());
 }
 
 exports.removeBookmark = async (req, res, next) => {
     const {articleId} = req.body;
     const user = await User.findOneAndUpdate(
         {_id: req.user._id},
-        {$pull: {bookmarks: followId}},
+        {$pull: {bookmarks: articleId}},
         {new: true},
     )
-    res.status(201).json(user.toWeb());
+    res.status(201).json(user.withoutPassword());
 }
 

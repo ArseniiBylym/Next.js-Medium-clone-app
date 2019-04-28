@@ -2,7 +2,7 @@ const User = require('../models/User.model');
 const Article = require('../models/Article.model');
 
 exports.getUsers = async (req, res, next) => {
-    const users = await User.find();
+    const users = await User.find().sort({name: 1});
     res.status(200).json(users.map(user => user.withoutPassword()))
 }
 

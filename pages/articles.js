@@ -42,11 +42,15 @@ const Articles = ({classes, data}) => {
                                             </Link>
                                         </NextLink>
                                     }
+                                    action={
+                                        <Typography align='center' variant="body1">{getDate(item.createdAt)}</Typography>
+                                    }
+                                    classes={{action: classes.header_createdAt}}
                                 />
                                 <CardContent>
                                     <NextLink href={`/article/${item._id}`}>
                                         <Link className={classes.link}>
-                                            <Typography variant="h4" gutterBottom color="textPrimary">
+                                            <Typography variant="h4" gutterBottom color="textPrimary" className={classes.article_title}>
                                                 {item.title}
                                             </Typography>
                                         </Link>
@@ -61,12 +65,18 @@ const Articles = ({classes, data}) => {
                                     <IconButton disabled={true}>
                                         <MdFavoriteBorder />
                                     </IconButton>
-                                    <Typography variant="body2" color="primary">{item.likes.length}</Typography>
+                                    <Typography variant="body2" color="primary">
+                                        {item.likes.length}
+                                    </Typography>
                                     {getBookmarkButton()}
                                 </CardActions>
                             </Grid>
                             <Grid item xs={12} md={5} className={classes.image_container}>
-                                    <CardMedia component="img" image={item.image} className={classes.image} />
+                                <NextLink href={`/article/${item._id}`}>
+                                    <CardActionArea>
+                                        <CardMedia component="img" image={item.image} className={classes.image} />
+                                    </CardActionArea>
+                                </NextLink>
                             </Grid>
                         </Grid>
                     </Card>
@@ -78,14 +88,12 @@ const Articles = ({classes, data}) => {
     return (
         <Components.Layout>
             <Paper className={classes.wrapper}>
-                <Grid container direction="column" alignItems="center" spacing={24} className={classes.main_container}>
-                    <Grid item>
-                        <Typography variant="h3" align="center" color="primary" className={classes.header}>
-                            Articles
-                        </Typography>
-                    </Grid>
-                    <Grid item container direction="column" spacing={24}>
-                        <Divider className={classes.divider} />
+                <Grid container direction="column" spacing={24} className={classes.main_container}>
+                    <Typography variant="h3" align="center" color="primary" className={classes.header}>
+                        Articles
+                    </Typography>
+                    <Divider variant="middle" />
+                    <Grid item container spacing={24} direction="column">
                         {data.length ? (
                             articlesList()
                         ) : (
@@ -116,9 +124,11 @@ const styles = theme => ({
     main_container: {
         maxWidth: '1000px',
         margin: '0 auto',
+        width: '100%',
     },
     header: {
         marginTop: '3rem',
+        padding: '12px',
     },
     divider: {
         marginBottom: '2rem',
@@ -130,7 +140,9 @@ const styles = theme => ({
         backgroundSize: 'cover',
     },
     image_container: {
-        maxHeight: '250px',
+        [theme.breakpoints.down('sm')]: {
+            order: -1,
+        },
     },
     link: {
         cursor: 'pointer',
@@ -139,9 +151,16 @@ const styles = theme => ({
             textDecoration: 'none',
         },
     },
-    article: {
-        height: '250px',
+    article_title: {
+        transition: 'color .5s ease',
+        '&:hover': {
+            color: "#009688"
+        }
     },
+    header_createdAt: {
+        alignSelf: 'center',
+        marginRight: '10px',
+    }
 });
 
 export default withStyles(styles)(Articles);

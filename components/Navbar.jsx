@@ -52,7 +52,7 @@ class Navbar extends Component {
         const {classes} = this.props;
         return (
             <>
-                <AppBar position="static">
+                <AppBar position="static" className={classes.app_bar}>
                     <Toolbar>
                         <NextLink href="/">
                             <Link title="Home" className={classes.home_link}>
@@ -105,6 +105,9 @@ class Navbar extends Component {
 }
 
 const styles = themes => ({
+    app_bar: {
+        zIndex: '1000',
+    },
     nav_list: {
         display: 'flex',
         flexGrow: 1,

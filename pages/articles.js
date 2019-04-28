@@ -5,52 +5,72 @@ import API from '../api';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
+import Card from '@material-ui/core/Card';
 import Avatar from '@material-ui/core/Avatar';
+import Divider from '@material-ui/core/Divider';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
+import IconButton from '@material-ui/core/IconButton';
+import CardMedia from '@material-ui/core/CardMedia';
 import {withStyles} from '@material-ui/core/styles';
-import {FaRegThumbsUp} from 'react-icons/fa';
+import {MdFavoriteBorder} from 'react-icons/md';
 import {getDate} from './../lib/functions';
 
 const Articles = ({classes, data}) => {
+    const getBookmarkButton = () => {
+        return null;
+    };
+
     const articlesList = () => {
         return data.map((item, i) => {
             return (
-                <Paper key={item._id} className={classes.paper}>
-                    <Grid container className={classes.article}>
-                        <Grid item sm={8} className={classes.info}>
-                            <Grid container alignItems="center" direction="row" className={classes.article_info}>
-                                <NextLink href={`/profile/${item.author._id}`}>
-                                    <Link title={item.author.name}>
-                                        <Grid container alignItems="center" className={classes.user_info}>
-                                            <Avatar src={item.author.avatar} className={classes.avatar} />
-                                            <Typography variant="body1" className={classes.user_name}>
-                                                {item.author.name}
+                <Grid key={item._id} item>
+                    <Card>
+                        <Grid container direction="row" className={classes.article}>
+                            <Grid item xs={12} md={7}>
+                                <CardHeader
+                                    avatar={<Avatar src={item.author.avatar} className={classes.avatar} />}
+                                    title={
+                                        <NextLink href={`/profile/${item.author._id}`}>
+                                            <Link className={classes.link}>
+                                                <Typography variant="body1" noWrap={true}>
+                                                    {item.author.name}
+                                                </Typography>
+                                            </Link>
+                                        </NextLink>
+                                    }
+                                />
+                                <CardContent>
+                                    <NextLink href={`/article/${item._id}`}>
+                                        <Link className={classes.link}>
+                                            <Typography variant="h4" gutterBottom color="textPrimary">
+                                                {item.title}
                                             </Typography>
-                                        </Grid>
-                                    </Link>
-                                </NextLink>
-                                <Grid item className={classes.date}>
-                                    <Typography variant="body1">{getDate(item.createdAt)}</Typography>
-                                </Grid>
+                                        </Link>
+                                    </NextLink>
+                                    {item.subTitle && (
+                                        <Typography variant="body1" gutterBottom color="textSecondary">
+                                            {item.subTitle}
+                                        </Typography>
+                                    )}
+                                </CardContent>
+                                <CardActions>
+                                    <IconButton disabled={true}>
+                                        <MdFavoriteBorder />
+                                    </IconButton>
+                                    <Typography variant="body2" color="primary">{item.likes.length}</Typography>
+                                    {getBookmarkButton()}
+                                </CardActions>
                             </Grid>
-                            <NextLink href={`/article/${item._id}`}>
-                                <Link className={classes.article_link}>
-                                    <Typography variant="h4" gutterBottom color="textPrimary">
-                                        {item.title}
-                                    </Typography>
-                                </Link>
-                            </NextLink>
-                            {item.subTitle && (
-                                <Typography gutterBottom variant="h6" color="textSecondary">
-                                    {item.subTitle}
-                                </Typography>
-                            )}
-                            {/* <Grid container direction="row">
-                                <Typography variant="h6"><FaRegThumbsUp />  {item.likes.length}</Typography>
-                            </Grid> */}
+                            <Grid item xs={12} md={5} className={classes.image_container}>
+                                    <CardMedia component="img" image={item.image} className={classes.image} />
+                            </Grid>
                         </Grid>
-                        <Grid item sm={4} className={classes.image_container} style={{backgroundImage: `url(${item.image})`}} />
-                    </Grid>
-                </Paper>
+                    </Card>
+                </Grid>
             );
         });
     };
@@ -58,11 +78,22 @@ const Articles = ({classes, data}) => {
     return (
         <Components.Layout>
             <Paper className={classes.wrapper}>
-                <Typography gutterBottom variant="h3" align="center" color="textPrimary">
-                    Articles
-                </Typography>
-                <Grid container spacing={16} direction="column" >
-                    {data.length ? articlesList() : <Typography variant="h6" color="textSecondary">Articles list is empty now</Typography>}
+                <Grid container direction="column" alignItems="center" spacing={24} className={classes.main_container}>
+                    <Grid item>
+                        <Typography variant="h3" align="center" color="primary" className={classes.header}>
+                            Articles
+                        </Typography>
+                    </Grid>
+                    <Grid item container direction="column" spacing={24}>
+                        <Divider className={classes.divider} />
+                        {data.length ? (
+                            articlesList()
+                        ) : (
+                            <Typography variant="h6" color="textSecondary">
+                                Articles list is empty now
+                            </Typography>
+                        )}
+                    </Grid>
                 </Grid>
             </Paper>
         </Components.Layout>
@@ -81,56 +112,35 @@ Articles.getInitialProps = async ({req}) => {
 const styles = theme => ({
     wrapper: {
         margin: '2rem',
-        padding: '1rem 6rem',
-        flexGrow: 1,
     },
-    paper: {
-        overflow: 'hidden',
-        margin: '1rem 0',
-        // maxWidth: '800px',
-        // margin: '0 auto',
+    main_container: {
+        maxWidth: '1000px',
+        margin: '0 auto',
     },
-    article: {
-        height: '220px',
-        overflow: 'hidden',
+    header: {
+        marginTop: '3rem',
     },
-    article_info: {
-        marginBottom: '1rem',
-    },
-    article_link: {
-        textDecoration: 'none',
-        cursor: 'pointer',
-        '&:hover': {
-            color: theme.palette.text.secodary,
-            textDecoration: 'none',
-        }
-    },
-    info: {
-        padding: '1rem',
-        height: '100%',
-    },
-    user_info: {
-        display: 'flex',
-        flexFlow: 'row nowrap',
-        cursor: 'pointer',
-    },
-    date: {
-        marginLeft: '2rem',
-    },
-    avatar: {
-        marginRight: '10px',
-    },
-    image_container: {
-        height: '100%',
-        display: 'flex',
-        backgroundSize: 'contain',
-        backgroundPosition: 'right top',
-        backgroundRepeat: 'no-repeat',
+    divider: {
+        marginBottom: '2rem',
     },
     image: {
-        objectFit: 'cover',
+        width: '100%',
         height: '100%',
-        marginLeft: 'auto',
+        backgroundPosition: 'center center',
+        backgroundSize: 'cover',
+    },
+    image_container: {
+        maxHeight: '250px',
+    },
+    link: {
+        cursor: 'pointer',
+        textDecoration: 'none',
+        '&:hover': {
+            textDecoration: 'none',
+        },
+    },
+    article: {
+        height: '250px',
     },
 });
 

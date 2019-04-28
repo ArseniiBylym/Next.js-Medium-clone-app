@@ -11,7 +11,7 @@ import { getDate } from './../lib/functions';
 const CardArticle = ({classes, title, subTitle, image, _id, createdAt}) => {
     return (
         <Grid item >
-        <Card className={classes.card}>
+        <Card>
             <NextLink href={`/article/${_id}`}>
                 <CardActionArea>
                     <Grid container direction="row" spacing={16} className={classes.article}>

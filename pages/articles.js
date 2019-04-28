@@ -45,7 +45,7 @@ const Articles = ({classes, data}) => {
                                 </Typography>
                             )}
                             {/* <Grid container direction="row">
-                                <Typography variant="h6"><FaRegThumbsUp />  {item.claps.length}</Typography>
+                                <Typography variant="h6"><FaRegThumbsUp />  {item.likes.length}</Typography>
                             </Grid> */}
                         </Grid>
                         <Grid item sm={4} className={classes.image_container} style={{backgroundImage: `url(${item.image})`}} />

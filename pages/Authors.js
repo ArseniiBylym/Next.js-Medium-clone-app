@@ -5,37 +5,32 @@ import Paper from '@material-ui/core/Paper';
 import {withStyles} from '@material-ui/core/styles';
 
 const Authors = ({data, classes}) => {
-
-    const authors = data.map((item, i) => {
-        return (
-            <div>hello</div>
-        )
-    })
-
     return (
         <Components.Layout>
-        <Paper className={classes.wrapper}>
-            <Typography variant='h3' align="center">Authors</Typography>
-        </Paper>
-    </Components.Layout>
+            <Paper className={classes.wrapper}>
+                <Typography variant="h3" align="center">
+                    Authors
+                </Typography>
+            </Paper>
+        </Components.Layout>
     );
 };
 
 Authors.getInitialProps = async ({req}) => {
     try {
         const {data, status} = await API.GET('/api/users');
-        return {data}
-    } catch(error) {
-        return {}
+        return {data};
+    } catch (error) {
+        return {};
     }
-}
+};
 
 const styles = theme => ({
     wrapper: {
         margin: '2rem',
         padding: '1rem',
         flexGrow: 1,
-    }
-})
+    },
+});
 
 export default withStyles(styles)(Authors);

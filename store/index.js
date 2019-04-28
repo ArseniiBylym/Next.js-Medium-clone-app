@@ -36,6 +36,16 @@ class Store {
         const isFollowed = profileUser.followers.find(item => item._id === this.user._id)
         return !!isFollowed;
     }
+
+    isAlreadyLiked = articleId => {
+        if (!this.user || !this.user.likes) return false;
+        const article = this.user.likes.find(item => item._id === articleId)
+        return !!article;
+    } 
+
+    @action likeArticle = ({_id, title, subTitle, image, createdAt}) => {
+        this.user.likes.push({_id, title, subTitle, image, createdAt})
+    }
 }
 
 let store = null;

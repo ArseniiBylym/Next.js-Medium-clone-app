@@ -10,7 +10,7 @@ exports.getUser = async (req, res, next) => {
     const _id = req.params.userId;
     const user = await User.findById(_id)
         .populate('articles', '_id title subTitle image createdAt')
-        .populate('claps', '_id title subTitle image createdAt')
+        .populate('likes', '_id title subTitle image createdAt')
         .populate('following', '_id name avatar email')
         .populate('followers', '_id name avatar email');
     if (!user) {
@@ -26,7 +26,7 @@ exports.updateUser = async (req, res, next) => {
         {new: true, runValidators: true},
     )
         .populate('articles', '_id title image createdAt')
-        .populate('claps', '_id title image createdAt')
+        .populate('likes', '_id title image createdAt')
         .populate('following', '_id name avatar')
         .populate('followers', '_id name avatar');
     if (!user) {

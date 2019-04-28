@@ -12,7 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Chip from '@material-ui/core/Chip';
 import {getDate} from './../lib/functions';
 import {inject, observer} from 'mobx-react';
-import {MdModeEdit} from 'react-icons/md';
+import {MdModeEdit, MdFavorite, MdFavoriteBorder} from 'react-icons/md';
 import {tagsToString, stringToTags} from '../lib/functions';
 
 @inject('store')
@@ -65,11 +65,42 @@ class Article extends Component {
         return (
             <Grid container direction="row" spacing={16} className={classes.tags}>
                 {tags.map(tag => (
-                    <Grid item><Chip key={tag} label={tag} classes={{root: classes.tag_chip, label: classes.tag_chip_label}} /></Grid>
+                    <Grid key={tag} item>
+                        <Chip key={tag} label={tag} classes={{root: classes.tag_chip, label: classes.tag_chip_label}} />
+                    </Grid>
                 ))}
             </Grid>
-        )
-    }
+        );
+    };
+
+    getLikesIcon = () => {
+        const {_id} = this.state;
+        return this.props.store.isAlreadyLiked(_id) ? (
+            <IconButton>
+                <MdFavorite />
+            </IconButton>
+        ) : (
+            <IconButton onClick={this.likeHandler}>
+                <MdFavoriteBorder />
+            </IconButton>
+        );
+    };
+
+    likeHandler = async () => {
+        if (!this.props.store.user) return false;
+        const {user, likeArticle} = this.props.store;
+        const {_id, title, subTitle, image, createdAt} = this.state;
+
+        const {data, status} = await API.PUT(`/api/articles/likes`, {articleId: _id});
+        if (status >= 300) {
+            console.log(data)
+        } else {
+            this.setState({
+               likes: [...this.state.likes].concat({_id: user._id, name: user.name, avatar: user.avatar})
+            })
+            likeArticle({_id, title, subTitle, image, createdAt})
+        }
+    };
 
     returnHandler = () => {
         this.setState({
@@ -81,12 +112,18 @@ class Article extends Component {
 
     render() {
         const {classes} = this.props;
-        const {_id, title, subTitle, text, image, author, claps, comments, createdAt, editMode, tags} = this.state;
+        const {_id, title, subTitle, text, image, author, likes, comments, createdAt, editMode, tags} = this.state;
         return (
             <Components.Layout>
                 <Paper className={classes.wrapper}>
                     {editMode ? (
-                        <Components.ArticleForm {...this.state} tags={typeof tags === 'string' ? tags : tagsToString(tags)} inputHandler={this.inputHander} submitHandler={this.submitHandler} returnHandler={this.returnHandler} />
+                        <Components.ArticleForm
+                            {...this.state}
+                            tags={typeof tags === 'string' ? tags : tagsToString(tags)}
+                            inputHandler={this.inputHander}
+                            submitHandler={this.submitHandler}
+                            returnHandler={this.returnHandler}
+                        />
                     ) : (
                         <div className={classes.container}>
                             <Grid container alignItems="center" justify="space-between" className={classes.title}>
@@ -103,23 +140,29 @@ class Article extends Component {
                                     {text}
                                 </Typography>
                                 <Grid container alignItems="center" direction="row" className={classes.article_info}>
-                                    <NextLink href={`/profile/${author._id}`}>
-                                        <Link title={author.name}>
-                                            <Grid container alignItems="center" className={classes.user_info}>
-                                                <Avatar src={author.avatar} className={classes.avatar} />
-                                                <Typography variant="body1" className={classes.user_name}>
-                                                    {author.name}
-                                                </Typography>
-                                            </Grid>
-                                        </Link>
-                                    </NextLink>
-                                    <Typography variant="body1">{getDate(createdAt)}</Typography>
-                                    <Typography variant="body1" color="primary" className={classes.clap_length}>
-                                        {claps.length}
-                                    </Typography>
-                                    <IconButton className={classes.clap_icon_root}>
-                                        <img src="/static/images/clap.png" width="50" className={classes.clap_icon} />
-                                    </IconButton>
+                                    <Grid item xs>
+                                        <NextLink href={`/profile/${author._id}`}>
+                                            <Link title={author.name}>
+                                                <Grid container alignItems="center" className={classes.user_info}>
+                                                    <Avatar src={author.avatar} className={classes.avatar} />
+                                                    <Typography variant="body1" className={classes.user_name}>
+                                                        {author.name}
+                                                    </Typography>
+                                                </Grid>
+                                            </Link>
+                                        </NextLink>
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Typography align="center" variant="body1">
+                                            {getDate(createdAt)}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs container direction="row" alignItems="center" justify="flex-end">
+                                        <Grid item>
+                                            <Typography variant="body1">{likes.length}</Typography>
+                                        </Grid>
+                                        <Grid item>{this.getLikesIcon()}</Grid>
+                                    </Grid>
                                 </Grid>
                                 <Components.Comments articleId={_id} comments={comments} />
                             </div>

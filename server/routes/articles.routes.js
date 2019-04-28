@@ -9,8 +9,8 @@ router.route('/')
         .get(articlesController.getArticles)
         .post(isAuth, uploadArticleImage, resizeArticleImage, articlesController.postArticle);
 
-router.route('/claps')
-        .put(isAuth, articlesController.clapToArticle);
+router.route('/likes')
+        .put(isAuth, articlesController.likesArticle);
 
 router.route('/comment/')
         .put(isAuth, articlesController.addComment);

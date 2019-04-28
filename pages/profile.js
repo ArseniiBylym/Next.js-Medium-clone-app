@@ -136,14 +136,14 @@ class Profile extends Component {
 
     getUserFavorites = () => {
         const {user} = this.state;
-        if (user.claps.length === 0) {
+        if (user.likes.length === 0) {
             return (
                 <Typography align='center' variant="body1">User doesn't have favorite articles yet</Typography>
             )
         }
         return (
             <Grid container direction="column" spacing={16} >
-                {user.claps.map(item => {
+                {user.likes.map(item => {
                     return (
                         <Components.CardArticle key={item._id} {...item} />
                     )

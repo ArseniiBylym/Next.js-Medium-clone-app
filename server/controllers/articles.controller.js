@@ -24,7 +24,7 @@ exports.getArticle = async (req, res, next) => {
     const article = await Article.findById(articleId)
         .populate('author', '_id name avatar')
         .populate('comments.author', '_id name avatar')
-        .populate('claps', '_id name avatar');
+        .populate('likes', '_id name avatar');
     res.status(200).json(article)
 }
 
@@ -37,8 +37,7 @@ exports.updateArticle = async (req, res, next) => {
     )
         .populate('author', '_id name avatar')
         .populate('comments.author', '_id name avatar')
-        .populate('claps', '_id name avatar');
-        console.log(article)
+        .populate('likes', '_id name avatar');
     res.status(200).json(article);
 }
 
@@ -52,16 +51,16 @@ exports.deleteArticle = async (req, res, next) => {
     res.status(200).json(deletedArticle);
 }
 
-exports.clapToArticle = async (req, res, next) => {
+exports.likesArticle = async (req, res, next) => {
     const {articleId} = req.body;
     const updatedArticle = await Article.findOneAndUpdate(
         {_id: articleId},
-        {$addToSet: {claps: req.user._id}},
+        {$addToSet: {likes: req.user._id}},
         {new: true, runValidators: true},
     )
     await User.findOneAndUpdate(
         {_id: req.user._id},
-        {$addToSet: {claps: articleId}}
+        {$addToSet: {likes: articleId}}
     )
     res.status(200).json(updatedArticle);
 }

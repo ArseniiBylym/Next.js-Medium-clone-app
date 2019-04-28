@@ -8,7 +8,7 @@ const userSchema = new Schema(
         avatar: {type: String, default: '/static/images/avatar.png'},
         info: {type: String, trim: true, maxlength: 100},
         articles: [{type: Schema.Types.ObjectId, ref: 'Article'}],
-        claps: [{type: Schema.Types.ObjectId, ref: 'Article'}],
+        likes: [{type: Schema.Types.ObjectId, ref: 'Article'}],
         bookmarks: [{type: Schema.Types.ObjectId, ref: 'Article'}],
         following: [{type: Schema.Types.ObjectId, ref: 'User'}],
         followers: [{type: Schema.Types.ObjectId, ref: 'User'}],
@@ -24,8 +24,8 @@ userSchema.statics.findOneByEmail = function (email, cb) {
 }
 
 userSchema.pre('findById', function (next) {
-    this.populate('articles', '_id title subTitle claps image');
-    this.populate('claps', '_id title subTitle claps image');
+    this.populate('articles', '_id title subTitle likes image');
+    this.populate('likes', '_id title subTitle likes image');
     this.populate('following', '_id name avatar email');
     this.populate('followers', '_id name avatar email');
     next()
@@ -36,17 +36,5 @@ userSchema.methods.withoutPassword = function(){
     delete user.password;
     return user
 }
-
-// userSchema.methods.toWebShort = function(){
-//     const userData = this.toJSON();
-//     const user = {
-//         _id: userData._id,
-//         name: userData.name,
-//         email: userData.email,
-//         status: userData.status,
-//         avatar: userData.avatar,
-//     } 
-//     return user;
-// }
 
 module.exports = model('User', userSchema);

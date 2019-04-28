@@ -20,7 +20,7 @@ exports.login = async (req, res, next) => {
         const {email, password} = req.body;
         const user = await User.findOne({email})
             .populate('articles', '_id title image createdAt')
-            .populate('claps', '_id title image createdAt')
+            .populate('likes', '_id title image createdAt')
             .populate('following', '_id name avatar')
             .populate('followers', '_id name avatar');
         if (!user) {

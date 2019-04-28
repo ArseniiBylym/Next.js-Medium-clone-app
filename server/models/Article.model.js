@@ -12,7 +12,7 @@ const articleSchema = new Schema(
             text: {type: String, required: true, maxlength: 500},
             createdAt: {type: Date, required: true, default: new Date()},
         }],
-        claps: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        likes: [{type: Schema.Types.ObjectId, ref: 'User'}],
         tags: [{type: String, maxlength: 30}],
         isPrivate: {type: Boolean, default: false},
     }, 
@@ -26,7 +26,7 @@ articleSchema.index({title: 'text'})
 articleSchema.pre('findById', function (next) {
     this.populate('autor', '_id name avatar');
     this.populate('comments.author', '_id name avatar');
-    this.populate('claps', '_id name avatar');
+    this.populate('likes', '_id name avatar');
 })
 
 articleSchema.methods.getCommentsId = function() {

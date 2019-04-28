@@ -69,8 +69,8 @@ class Comments extends Component {
                         </Typography>
                         {comments.map((item, i) => {
                             return (
-                                <Grid item>
-                                    <Card key={item._id} className={classes.card}>
+                                <Grid key={item._id} item>
+                                    <Card className={classes.card}>
                                         <CardHeader
                                             avatar={<Avatar className={classes.avatar} src={item.author.avatar} />}
                                             action={this.getDeleteButton(item._id, item.author._id)}

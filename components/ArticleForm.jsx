@@ -7,11 +7,9 @@ import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
 import {MdArrowBack} from 'react-icons/md';
 
-const ArticleForm = ({classes, title, subTitle, image, text, tags, inputHandler, submitHandler, sending, returnHandler}) => {
+const ArticleForm = ({classes, title, subTitle, image, text, tagsString, inputHandler, submitHandler, sending, returnHandler}) => {
     return (
         <>
-            {/* <Grid container alignItems="center" justify="center" className={classes.title}> */}
-            {/* </Grid> */}
             <form className={classes.form} onSubmit={submitHandler} >
                 <IconButton onClick={returnHandler} className={classes.button_back} >
                     <MdArrowBack />
@@ -98,8 +96,8 @@ const ArticleForm = ({classes, title, subTitle, image, text, tags, inputHandler,
                     fullWidth
                     helperText="List of tags (optional). Example: Tech, Life, Education"
                     label="Tags"
-                    name="tags"
-                    value={tags}
+                    name="tagsString"
+                    value={tagsString}
                     className={classes.textField}
                     margin="normal"
                     variant="outlined"

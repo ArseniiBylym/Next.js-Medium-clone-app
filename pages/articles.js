@@ -30,13 +30,13 @@ const Articles = ({classes, data}) => {
                 <Grid key={item._id} item>
                     <Card>
                         <Grid container direction="row" className={classes.article}>
-                            <Grid item xs={12} md={7}>
+                            <Grid item xs={12} md={7} zeroMinWidth>
                                 <CardHeader
                                     avatar={<Avatar src={item.author.avatar} className={classes.avatar} />}
                                     title={
                                         <NextLink href={`/profile/${item.author._id}`}>
                                             <Link className={classes.link}>
-                                                <Typography variant="body1" noWrap={true}>
+                                                <Typography variant="body1">
                                                     {item.author.name}
                                                 </Typography>
                                             </Link>
@@ -56,7 +56,7 @@ const Articles = ({classes, data}) => {
                                         </Link>
                                     </NextLink>
                                     {item.subTitle && (
-                                        <Typography variant="body1" gutterBottom color="textSecondary">
+                                        <Typography variant="body1" gutterBottom color="textSecondary" className={classes.article_subTitle}>
                                             {item.subTitle}
                                         </Typography>
                                     )}
@@ -153,9 +153,17 @@ const styles = theme => ({
     },
     article_title: {
         transition: 'color .5s ease',
+        textOverflow: 'ellipsis',
+        // whiteSpace: 'nowrap',
+        overflow: 'hidden',
         '&:hover': {
             color: "#009688"
         }
+    },
+    article_subTitle: {
+        // textOverflow: 'ellipsis',
+        // whiteSpace: 'nowrap',
+        // overflow: 'hidden',
     },
     header_createdAt: {
         alignSelf: 'center',

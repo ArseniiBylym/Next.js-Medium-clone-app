@@ -20,6 +20,7 @@ import {tagsToString, stringToTags} from '../lib/functions';
 class Article extends Component {
     state = {
         ...this.props.data,
+        tagsString: tagsToString(this.props.data.tags),
         editMode: false,
         sending: false,
     };
@@ -32,9 +33,9 @@ class Article extends Component {
 
     submitHandler = async e => {
         e.preventDefault();
-        const {_id, title, subTitle, text, image, tags} = this.state;
+        const {_id, title, subTitle, text, image, tagsString} = this.state;
         this.setState({sending: true});
-        const {data, status} = await API.PUT(`/api/articles/${_id}`, {title, subTitle, text, image, tags: stringToTags(tags)});
+        const {data, status} = await API.PUT(`/api/articles/${_id}`, {title, subTitle, text, image, tags: stringToTags(tagsString)});
         if (status >= 300) {
             console.log(data);
         } else {
@@ -112,14 +113,13 @@ class Article extends Component {
 
     render() {
         const {classes} = this.props;
-        const {_id, title, subTitle, text, image, author, likes, comments, createdAt, editMode, tags} = this.state;
+        const {_id, title, subTitle, text, image, author, likes, comments, createdAt, editMode} = this.state;
         return (
             <Components.Layout>
                 <Paper className={classes.wrapper}>
                     {editMode ? (
                         <Components.ArticleForm
                             {...this.state}
-                            tags={typeof tags === 'string' ? tags : tagsToString(tags)}
                             inputHandler={this.inputHander}
                             submitHandler={this.submitHandler}
                             returnHandler={this.returnHandler}

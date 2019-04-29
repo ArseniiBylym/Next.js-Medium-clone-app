@@ -2,7 +2,9 @@ const Article = require('../models/Article.model');
 const User = require('../models/User.model');
 
 exports.getArticles = async (req, res, next) => {
-    const articles = await Article.find().select('-text -comments').sort({createdAt: -1}).populate('author', '_id name avatar');
+    const sortBy = req.query.sortBy || 'createdAt';
+    const order = req.query.order === '0' ? '' : '-';
+    const articles = await Article.find().select('-text -comments').sort(`${order}${sortBy}`).populate('author', '_id name avatar');
     res.status(200).json(articles);
 }
 
@@ -55,7 +57,10 @@ exports.likesArticle = async (req, res, next) => {
     const {articleId} = req.body;
     const updatedArticle = await Article.findOneAndUpdate(
         {_id: articleId},
-        {$addToSet: {likes: req.user._id}},
+        {
+            $addToSet: {likes: req.user._id},
+            $inc: {likesLength: 1}
+        },
         {new: true, runValidators: true},
     )
     await User.findOneAndUpdate(

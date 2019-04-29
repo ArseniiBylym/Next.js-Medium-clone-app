@@ -88,6 +88,7 @@ Authors.getInitialProps = async ({req}) => {
 const styles = theme => ({
     wrapper: {
         margin: '2rem',
+        flexGrow: 1,
     },
     header: {
         marginTop: '3rem',

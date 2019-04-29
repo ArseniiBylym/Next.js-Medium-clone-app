@@ -13,6 +13,7 @@ const articleSchema = new Schema(
             createdAt: {type: Date, required: true, default: new Date()},
         }],
         likes: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        likesLength: {type: Number, default: 0},
         tags: [{type: String, maxlength: 30}],
         isPrivate: {type: Boolean, default: false},
     }, 
@@ -27,6 +28,10 @@ articleSchema.pre('findById', function (next) {
     this.populate('autor', '_id name avatar');
     this.populate('comments.author', '_id name avatar');
     this.populate('likes', '_id name avatar');
+})
+
+articleSchema.virtual('raiting').get(function() {
+    return this.likes.length;
 })
 
 articleSchema.methods.getCommentsId = function() {

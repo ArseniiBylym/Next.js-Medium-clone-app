@@ -2,7 +2,13 @@ const User = require('../models/User.model');
 const Article = require('../models/Article.model');
 
 exports.getUsers = async (req, res, next) => {
-    const users = await User.find().sort({name: 1});
+    const sortBy = req.query.sortBy || 'name';
+    const order = req.query.order === '1' ? '-' : ''
+    console.log('....')
+    console.log(req.query)
+    console.log(sortBy, order)
+    console.log('______')
+    const users = await User.find().sort(`${order}${sortBy}`);
     res.status(200).json(users.map(user => user.withoutPassword()))
 }
 
@@ -44,7 +50,10 @@ exports.follow = async (req, res, next) => {
     const {followId} = req.body;
     const followedUser = await User.findOneAndUpdate(
         {_id: followId},
-        {$addToSet: {followers: req.user._id}},
+        {
+            $addToSet: {followers: req.user._id},
+            $inc: {followersLength: 1}
+        },
         {new: true},
     );
     if (!followedUser) {
@@ -52,7 +61,10 @@ exports.follow = async (req, res, next) => {
     }
     const user = await User.findOneAndUpdate(
         {_id: req.user._id},
-        {$addToSet: {following: followId}},
+        {
+            $addToSet: {following: followId},
+            $inc: {followingLength: 1}
+        },
         {new: true},
     )
     res.status(201).json(user.withoutPassword())
@@ -62,7 +74,10 @@ exports.unfollow = async (req, res, next) => {
     const {followId} = req.body;
     const followedUser = await User.findOneAndUpdate(
         {_id: followId},
-        {$pull: {followers: req.user._id}},
+        {
+            $pull: {followers: req.user._id},
+            $dec: {followersLength: 1}
+        },
         {new: true},
     );
     if (!followedUser) {
@@ -70,7 +85,10 @@ exports.unfollow = async (req, res, next) => {
     }
     const user = await User.findOneAndUpdate(
         {_id: req.user._id},
-        {$pull: {following: followId}},
+        {
+            $pull: {following: followId},
+            $dec: {followindLength: 1}
+        },
         {new: true},
     )
     res.status(201).json(user.withoutPassword())

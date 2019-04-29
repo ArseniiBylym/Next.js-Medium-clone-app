@@ -93,7 +93,7 @@ const Articles = ({classes, data}) => {
                         Articles
                     </Typography>
                     <Divider variant="middle" />
-                    <Grid item container spacing={24} direction="column">
+                    <Grid item container spacing={24} direction="column" className={classes.articles}>
                         {data.length ? (
                             articlesList()
                         ) : (
@@ -120,15 +120,21 @@ Articles.getInitialProps = async ({req}) => {
 const styles = theme => ({
     wrapper: {
         margin: '2rem',
+        flexGrow: 1,
     },
     main_container: {
         maxWidth: '1000px',
         margin: '0 auto',
         width: '100%',
+        
     },
     header: {
         marginTop: '3rem',
         padding: '12px',
+    },
+    articles: {
+        width: '100%',
+        margin: '0'
     },
     divider: {
         marginBottom: '2rem',

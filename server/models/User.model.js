@@ -11,7 +11,9 @@ const userSchema = new Schema(
         likes: [{type: Schema.Types.ObjectId, ref: 'Article'}],
         bookmarks: [{type: Schema.Types.ObjectId, ref: 'Article'}],
         following: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        followingLength: {type: Number, default: 0},
         followers: [{type: Schema.Types.ObjectId, ref: 'User'}],
+        followersLength: {type: Number, default: 0},
         status: {type: String, required: true, default: 'general'},
     }, 
     {

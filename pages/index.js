@@ -13,12 +13,11 @@ import {FaMedium} from 'react-icons/fa';
 import API from '../api';
 
 const Home = ({classes, articles, authors}) => {
-    console.log(articles, authors)
     return (
         <Components.Layout>
-            <div className="wrapper">
-                <Grid container direction="column" spacing="0">
-                    <Grid item container xs={12} spacing="24" alignItems="center" justify="center" className={classes.header}>
+            <Paper className={classes.wrapper}>
+                <Grid container direction="column" spacing={0}>
+                    <Grid item container xs={12} spacing={24} alignItems="center" justify="center" className={classes.header}>
                         <Grid item>
                             <Avatar className={classes.avatar}>
                                 <FaMedium className={classes.avatar_svg} />
@@ -36,48 +35,53 @@ const Home = ({classes, articles, authors}) => {
                         </Typography>
                         <Divider variant='middle'/>
                     </Grid>
-                    <Grid item container spacing='24' direction="row" className={classes.content} >
-                        <Grid item container xs={12} md={8} direction="column" spacing="16" className={classes.articles}>
+                    <Grid item container spacing={24} direction="row" className={classes.content} >
+                        <Grid item container xs={12} md={8} direction="column" spacing={16} className={classes.articles}>
                             <Grid item className={classes.articles_header}>
                                 <Typography align="center" variant="h5">
                                     Articles
                                 </Typography>
+                                <Typography align="center" variant="subtitle1">(top rated)</Typography>
                             </Grid>
                             <Grid item>
-                                <Paper>
-                                    <Grid container direction="column" spacing='24' zeroMinWidth className={classes.articles_content}>
+                                {/* <Paper> */}
+                                    <Grid container direction="column" spacing={24} zeroMinWidth className={classes.articles_content}>
                                         {articles && articles.map(item => (
                                             <Components.CardArticle key={item._id} {...item} />
                                         ))}
                                     </Grid>
-                                </Paper>
+                                {/* </Paper> */}
                             </Grid>
                         </Grid>
-                        <Grid item container xs={12} md={4} direction="column" spacing="16" className={classes.authors}>
+                        <Grid item container xs={12} md={4} direction="column" spacing={16} className={classes.authors}>
                             <Grid item className={classes.authors_header}>
                                 <Typography align="center" variant="h5">
                                     Authors
                                 </Typography>
+                                <Typography align="center" variant="subtitle1">(with the most followers)</Typography>
                             </Grid>
                             <Grid item>
-                                <Paper>
-                                    <Grid container direction="column" spacing='24' zeroMinWidth className={classes.authors_content}>
+                                {/* <Paper> */}
+                                    <Grid container direction="column" spacing={24} zeroMinWidth className={classes.authors_content}>
                                         {authors && authors.map(item => (
                                             <Components.CardUser key={item._id} {...item} />
                                         ))}
                                     </Grid>
-                                </Paper>
+                                {/* </Paper> */}
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
-            </div>
+            </Paper>
         </Components.Layout>
     );
 };
 
 const style = theme => ({
-    wrapper: {},
+    wrapper: {
+        // margin: '2rem',
+        flexGrow: 1,
+    },
     header: {
         marginTop: '2rem',
     },
@@ -112,10 +116,11 @@ const style = theme => ({
 
 Home.getInitialProps = async ({req}) => {
     try {
-
-        const authors = (await API.GET('/api/users')).data;
-        const articles = (await API.GET('/api/articles')).data;
-        return {authors, articles};
+        const result = await Promise.all([
+            API.GET('/api/users?sortBy=followersLength&order=1'), 
+            API.GET('/api/articles?sortBy=likesLength&order=1')
+        ])
+        return {authors: result[0].data, articles: result[1].data};
     } catch (error) {
         return {};
     }

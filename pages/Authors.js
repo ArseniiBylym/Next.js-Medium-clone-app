@@ -115,8 +115,8 @@ const styles = theme => ({
         padding: '2rem',
     },
     avatar: {
-        width: '5rem',
-        height: '5rem',
+        width: '150px',
+        height: '150px',
     },
 });
 

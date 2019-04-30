@@ -16,14 +16,14 @@ const CardUser = ({classes, name, avatar, email, _id}) => {
             <NextLink href={`/profile/${_id}`}>
                 <CardActionArea>
                     <Grid container direction="row" spacing={16} className={classes.article}>
-                        <Grid item container xs={12} md={4} alignItems='center' justify='center'>
+                        <Grid item container xs={12} md={3} alignItems='center' justify='center'>
                             {/* <Grid container aligItems='center' justify='center'> */}
                                 <Grid item>
-                                    <Avatar src={avatar} />
+                                    <Avatar src={avatar} className={classes.avatar}/>
                                 </Grid>
                             {/* </Grid> */}
                         </Grid>
-                        <Grid item container xs={12} md={8} alignItems='center' spacing={24}>
+                        <Grid item container xs={12} md={9} alignItems='center' spacing={24}>
                             {/* <CardContent> */}
                                     <Grid item>
                                         <Typography variant="h6">{name}</Typography>
@@ -51,6 +51,10 @@ const styles = theme => ({
         height: '100%',
         backgroundPosition: 'left top',
         backgroundSize: 'cover',
+    },
+    avatar: {
+        width: '60px',
+        height: '60px',
     },
 });
 

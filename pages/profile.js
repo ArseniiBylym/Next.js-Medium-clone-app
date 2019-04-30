@@ -13,29 +13,23 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
 import {withStyles} from '@material-ui/core/styles';
-import {MdAssignment, MdFavoriteBorder, MdPeople, MdRecordVoiceOver, MdMailOutline, MdDateRange, MdModeEdit} from 'react-icons/md';
+import {MdAssignment, MdFavoriteBorder, MdPeople, MdRecordVoiceOver, MdMailOutline, MdDateRange, MdModeEdit, MdCloudUpload} from 'react-icons/md';
 import {getDate} from '../lib/functions';
 import {inject, observer} from 'mobx-react';
-
-
-function TabContainer(props) {
-    return (
-        <Typography component="div" style={{padding: 8 * 3}}>
-            {props.children}
-        </Typography>
-    );
-}
 
 @inject('store')
 @observer
 class Profile extends Component {
     state = {
         user: this.props.user,
+        file: '',
         tabValue: 0,
         editMode: false,
-        sending: false
+        sending: false,
     };
 
     tabValueHandler = (e, tabValue) => {
@@ -91,101 +85,137 @@ class Profile extends Component {
         this.setState({
             user: {
                 ...this.state.user,
-                [e.target.name]: e.target.value
-            }
-        })
-    }
+                [e.target.name]: e.target.value,
+            },
+        });
+    };
 
     updateHandler = async () => {
-        this.setState({sending: true})
-        const {_id, name, email, info} = this.state.user;
-        const {data, status} = await API.PUT(`/api/users/${_id}`, {name, email, info})
+        this.setState({sending: true});
+        const {file, user: {_id, name, email, info}} = this.state;
+        let body = {};
+        if (file) {
+            const formData = new FormData();
+            formData.append('name', name)
+            formData.append('email', email)
+            formData.append('info', info || '')
+            formData.append('avatar', file)
+            body = formData;
+        } else {
+            body = {name, email, info}
+        }
+        const {data, status} = await API.PUT(`/api/users/${_id}`, body);
         if (status >= 300) {
-            console.log(data)
+            console.log(data);
         } else {
             this.setState({
-                user: data, 
+                user: data,
                 sending: false,
                 editMode: false,
-            })
+            });
             this.props.store.setUser(data);
         }
-    }
+    };
 
     clearHandler = () => {
-        this.setState({user: this.props.user})
-    }
+        this.setState({user: this.props.user});
+    };
+
+    uploadAvatarHandler = e => {
+        console.log(e.target.files)
+        const file = e.target.files[0];
+        this.setState({file});
+    };
 
     getUserArticles = () => {
         const {user} = this.state;
         if (user.articles.length === 0) {
             return (
-                <Typography align='center' variant="body1">User doesn't have his own articles yet</Typography>
-            )
+                <Typography align="center" variant="body1">
+                    User doesn't have his own articles yet
+                </Typography>
+            );
         }
         return (
-            <Grid container direction="column" spacing={16} >
+            <Grid container direction="column" spacing={16}>
                 {user.articles.map(item => {
-                    return (
-                        <Components.CardArticle key={item._id} {...item} />
-                    )
+                    return <Components.CardArticle key={item._id} {...item} />;
                 })}
             </Grid>
-        )
-    }
+        );
+    };
 
     getUserFavorites = () => {
         const {user} = this.state;
         if (user.likes.length === 0) {
             return (
-                <Typography align='center' variant="body1">User doesn't have favorite articles yet</Typography>
-            )
+                <Typography align="center" variant="body1">
+                    User doesn't have favorite articles yet
+                </Typography>
+            );
         }
         return (
-            <Grid container direction="column" spacing={16} >
+            <Grid container direction="column" spacing={16}>
                 {user.likes.map(item => {
-                    return (
-                        <Components.CardArticle key={item._id} {...item} />
-                    )
+                    return <Components.CardArticle key={item._id} {...item} />;
                 })}
             </Grid>
-        )
-    }
+        );
+    };
 
     getFollowers = () => {
         const {user} = this.state;
-        if(user.following.length === 0) {
+        if (user.following.length === 0) {
             return (
-                <Typography align='center' variant="body1">User doesn't have followed users yet</Typography>
-            )
+                <Typography align="center" variant="body1">
+                    User doesn't have followed users yet
+                </Typography>
+            );
         }
         return (
-            <Grid container direction="column" spacing={16} >
+            <Grid container direction="column" spacing={16}>
                 {user.following.map(item => {
-                    return (
-                        <Components.CardUser key={item._id} {...item} />
-                    )
+                    return <Components.CardUser key={item._id} {...item} />;
                 })}
             </Grid>
-        )
-    }
+        );
+    };
 
     getFollowedBy = () => {
         const {user} = this.state;
-        if(user.followers.length === 0) {
+        if (user.followers.length === 0) {
             return (
-                <Typography align='center' variant="body1">Nobody follows this user yet</Typography>
-            )
+                <Typography align="center" variant="body1">
+                    Nobody follows this user yet
+                </Typography>
+            );
         }
         return (
-            <Grid container direction="column" spacing={16} >
+            <Grid container direction="column" spacing={16}>
                 {user.followers.map(item => {
-                    return (
-                        <Components.CardUser key={item._id} {...item} />
-                    )
+                    return <Components.CardUser key={item._id} {...item} />;
                 })}
             </Grid>
-        )
+        );
+    };
+
+    getUpdateImageButton = () => {
+        const {classes} = this.props;
+        return (
+            <>
+                <input type="file" id="uploadAvatar" accept="image/*" onChange={this.uploadAvatarHandler} className={classes.uploadAvatar_input} />
+                <label htmlFor="uploadAvatar" className={classes.uploadButton}>
+                    <Button variant="contained" color="primary" component="span">
+                        Upload Image
+                    </Button>
+                </label>
+            </>
+        );
+    };
+
+    getUserAvatar = () => {
+        const {file, user: {avatar}} = this.state;
+        return file ? URL.createObjectURL(file) : avatar;
     }
 
     render() {
@@ -204,10 +234,11 @@ class Profile extends Component {
                             <Card>
                                 <CardContent>
                                     <Grid container direction="row">
-                                        <Grid item xs={3} container alignItems="center" justify="center">
-                                            <Avatar src={user.avatar} className={classes.avatar} />
+                                        <Grid item xs={12} md={3} container alignItems="center" direction="column" justify="center">
+                                            <Avatar src={this.getUserAvatar()} className={classes.avatar} />
+                                            {this.props.store.isCurrentUserOwner(user._id) && editMode ? this.getUpdateImageButton() : null}
                                         </Grid>
-                                        <Grid item xs={7} className={classes.user_details}>
+                                        <Grid item xs={12} md={7} className={classes.user_details}>
                                             <Typography gutterBottom variant="h4" color="textPrimary">
                                                 {user.name}
                                             </Typography>
@@ -223,11 +254,14 @@ class Profile extends Component {
                                         </Grid>
                                         <Grid item xs={2} container alignItems="center" justify="flex-end">
                                             {this.props.store.isCurrentUserOwner(user._id) && (
-                                                <IconButton onClick={() => {this.setState(prevState => ({editMode: !prevState.editMode}))}}>
+                                                <IconButton
+                                                    onClick={() => {
+                                                        this.setState(prevState => ({editMode: !prevState.editMode}));
+                                                    }}
+                                                >
                                                     <MdModeEdit />
                                                 </IconButton>
-                                            )
-                                            }
+                                            )}
                                             {this.isAlreadyFollowed()}
                                         </Grid>
                                     </Grid>
@@ -235,16 +269,16 @@ class Profile extends Component {
                                 <Divider />
                                 {editMode && (
                                     <>
-                                    <Components.ProfileEdit 
-                                        name={user.name}
-                                        email={user.email}
-                                        info={user.info}
-                                        sending={sending}
-                                        inputHandler={this.inputHandler}
-                                        updateHandler={this.updateHandler}    
-                                        clearHandler={this.clearHandler}
-                                    />
-                                    <Divider />
+                                        <Components.ProfileEdit
+                                            name={user.name}
+                                            email={user.email}
+                                            info={user.info}
+                                            sending={sending}
+                                            inputHandler={this.inputHandler}
+                                            updateHandler={this.updateHandler}
+                                            clearHandler={this.clearHandler}
+                                        />
+                                        <Divider />
                                     </>
                                 )}
                                 <CardActions>
@@ -294,12 +328,15 @@ const styles = theme => ({
         justifyContent: 'center',
     },
     avatar: {
-        width: '80px',
-        height: '80px',
+        width: '150px',
+        height: '150px',
     },
     tab_content: {
         padding: '2rem',
-    }
+    },
+    uploadAvatar_input: {
+        display: 'none'
+    },
 });
 
 Profile.getInitialProps = async props => {

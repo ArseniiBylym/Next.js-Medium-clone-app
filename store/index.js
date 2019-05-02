@@ -1,4 +1,4 @@
-import {action, observable} from 'mobx';
+import {action, observable, reaction} from 'mobx';
 import {useStaticRendering} from 'mobx-react';
 import API from '../api'
 
@@ -8,10 +8,32 @@ useStaticRendering(isServer);
 class Store {
     @observable user = null;
     @observable userFetched = false;
+    @observable message = {
+        text: '',
+        open: false,
+        type: '',
+    }
 
     constructor(initialData = {}) {
         this.user = initialData.user || null;
         this.userFetched = initialData.userFetched || false;
+    }
+
+    @action showMessage = ({text, type = 'success', dellay = 0}) => {
+        setTimeout(() => {
+            this.message = {
+                text,
+                type,
+                open: true
+            }
+            setTimeout(() => {
+                this.hideMessage();
+            }, 5000)
+        }, dellay)
+    } 
+
+    @action hideMessage = () => {
+        this.message.open = false
     }
 
     @action getSession = async () => {

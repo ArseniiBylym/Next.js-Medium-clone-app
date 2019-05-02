@@ -10,6 +10,7 @@ const Layout = ({classes, children}) => {
                 <div className={classes.grow}>
                     {children}
                 </div>
+                <Components.Notification />
             </div>
         </div>
     );

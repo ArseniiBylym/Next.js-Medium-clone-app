@@ -25,14 +25,6 @@ userSchema.statics.findOneByEmail = function (email, cb) {
     return this.findOne({email: email}, cb)
 }
 
-userSchema.pre('findById', function (next) {
-    this.populate('articles', '_id title subTitle likes image');
-    this.populate('likes', '_id title subTitle likes image');
-    this.populate('following', '_id name avatar email');
-    this.populate('followers', '_id name avatar email');
-    next()
-})
-
 userSchema.methods.withoutPassword = function(){
     const user = this.toJSON();
     delete user.password;

@@ -4,10 +4,6 @@ const Article = require('../models/Article.model');
 exports.getUsers = async (req, res, next) => {
     const sortBy = req.query.sortBy || 'name';
     const order = req.query.order === '1' ? '-' : ''
-    console.log('....')
-    console.log(req.query)
-    console.log(sortBy, order)
-    console.log('______')
     const users = await User.find().sort(`${order}${sortBy}`);
     res.status(200).json(users.map(user => user.withoutPassword()))
 }
@@ -76,7 +72,7 @@ exports.unfollow = async (req, res, next) => {
         {_id: followId},
         {
             $pull: {followers: req.user._id},
-            $dec: {followersLength: 1}
+            $inc: {followersLength: -1}
         },
         {new: true},
     );
@@ -87,7 +83,7 @@ exports.unfollow = async (req, res, next) => {
         {_id: req.user._id},
         {
             $pull: {following: followId},
-            $dec: {followindLength: 1}
+            $inc: {followingLength: -1}
         },
         {new: true},
     )

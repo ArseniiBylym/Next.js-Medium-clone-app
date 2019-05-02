@@ -21,7 +21,6 @@ const defaultState = {
     email: '',
     password: '',
     rememberUser: false,
-    errorMessage: '',
 };
 
 @inject('store')
@@ -31,15 +30,14 @@ class Login extends Component {
 
     submitHandler = async e => {
         const {email, password} = this.state;
+        const {showMessage} = this.props.store;
         e.preventDefault();
         const {data, status} = await API.POST('/api/auth/login', {email, password});
         if (status > 300) {
-            console.log(data);
-            this.setState({
-                errorMessage: data
-            })
+            showMessage({text: data, type: 'error'})
         } else {
             this.props.store.setUser(data)
+            showMessage({text: `Loged in as ${data.name}`, type: 'info', dellay: 1500})
             this.props.router.push('/')
         }
     };
@@ -55,12 +53,6 @@ class Login extends Component {
             });
         }
     };
-
-    snackbarCloseHandler = () => {
-        this.setState({
-            errorMessage: '',
-        })
-    }
 
     render() {
         const {email, password, rememberUser, errorMessage} = this.state;
@@ -100,7 +92,6 @@ class Login extends Component {
                         </Paper>
                     </div>
                 </div>
-                <Components.Snackbar message={errorMessage} handleClose={this.snackbarCloseHandler}/>
             </Components.Layout>
         );
     }

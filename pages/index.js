@@ -3,10 +3,6 @@ import Components from './../components';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import CardActionArea from '@material-ui/core/CardActionArea';
 import Divider from '@material-ui/core/Divider';
 import Avatar from '@material-ui/core/Avatar';
 import {FaMedium} from 'react-icons/fa';
@@ -44,13 +40,11 @@ const Home = ({classes, articles, authors}) => {
                                 <Typography align="center" variant="subtitle1">(top rated)</Typography>
                             </Grid>
                             <Grid item>
-                                {/* <Paper> */}
                                     <Grid container direction="column" spacing={24} zeroMinWidth className={classes.articles_content}>
                                         {articles && articles.map(item => (
                                             <Components.CardArticle key={item._id} {...item} />
                                         ))}
                                     </Grid>
-                                {/* </Paper> */}
                             </Grid>
                         </Grid>
                         <Grid item container xs={12} md={4} direction="column" spacing={16} className={classes.authors}>
@@ -61,13 +55,11 @@ const Home = ({classes, articles, authors}) => {
                                 <Typography align="center" variant="subtitle1">(with the most followers)</Typography>
                             </Grid>
                             <Grid item>
-                                {/* <Paper> */}
-                                    <Grid container direction="column" spacing={24} zeroMinWidth className={classes.authors_content}>
+                                    <Grid container direction="column" spacing={24} className={classes.authors_content}>
                                         {authors && authors.map(item => (
                                             <Components.CardUser key={item._id} {...item} />
                                         ))}
                                     </Grid>
-                                {/* </Paper> */}
                             </Grid>
                         </Grid>
                     </Grid>
@@ -79,7 +71,6 @@ const Home = ({classes, articles, authors}) => {
 
 const style = theme => ({
     wrapper: {
-        // margin: '2rem',
         flexGrow: 1,
     },
     header: {
@@ -100,6 +91,11 @@ const style = theme => ({
         margin: '0',
     },
     articles: {
+        [theme.breakpoints.down('sm')]: {
+            maxWidth: '500px',
+            marginLeft: 'auto',
+            marginRight: 'auto'
+        },
     },
     articles_content: {
         width: '100%',

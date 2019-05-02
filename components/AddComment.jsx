@@ -1,9 +1,7 @@
 import {Component} from 'react';
 import {inject, observer} from 'mobx-react';
 import {withStyles} from '@material-ui/core/styles';
-
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import API from '../api';
@@ -20,17 +18,16 @@ class AddComment extends Component {
     };
 
     sendCommentHandler = async () => {
-        const {articleId, addComment} = this.props;
+        const {articleId, addComment, store: {showMessage}} = this.props;
         const {text} = this.state;
-        console.log(this.state.text);
 
         const {data, status} = await API.PUT('/api/articles/comment', {articleId, text});
         if (status >= 300) {
             console.log(data);
         } else {
-            console.log(data)
             addComment(data);
             this.setState({text: ''});
+            showMessage({text: 'New commet was added', type: 'success', dellay: 500})
         }
     };
 

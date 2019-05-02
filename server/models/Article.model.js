@@ -24,16 +24,6 @@ const articleSchema = new Schema(
 
 articleSchema.index({title: 'text'})
 
-articleSchema.pre('findById', function (next) {
-    this.populate('autor', '_id name avatar');
-    this.populate('comments.author', '_id name avatar');
-    this.populate('likes', '_id name avatar');
-})
-
-articleSchema.virtual('raiting').get(function() {
-    return this.likes.length;
-})
-
 articleSchema.methods.getCommentsId = function() {
     return this.comments.map(comment => comment.author)
 }

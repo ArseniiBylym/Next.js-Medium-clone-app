@@ -41,7 +41,7 @@ const styles = theme => ({
         width: '100%',
         height: '100%',
         minHeight: '200px',
-        backgroundPosition: 'left top',
+        backgroundPosition: 'center center',
         backgroundSize: 'cover',
     },
 });

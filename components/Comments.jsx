@@ -34,7 +34,7 @@ class Comments extends Component {
     };
 
     removeComment = commentId => async e => {
-        const {articleId} = this.props;
+        const {articleId, store: {showMessage}} = this.props;
         const {data, result} = await API.PUT(`/api/articles/comment/${commentId}`, {articleId});
         if (result >= 300) {
             console.log(data);
@@ -42,6 +42,8 @@ class Comments extends Component {
             console.log(data);
             const updatedComments = this.state.comments.filter(item => item._id !== commentId);
             this.setState({comments: updatedComments});
+            showMessage({text: 'Your comment was removed', type: 'info', dellay: 500})
+
         }
     };
 

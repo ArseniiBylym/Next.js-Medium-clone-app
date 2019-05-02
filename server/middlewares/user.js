@@ -1,6 +1,4 @@
 const multer = require('multer');
-const fs = require('fs-extra')
-const rimraf = require('rimraf');
 const jimp = require('jimp');
 
 exports.uploadAvatar = multer({

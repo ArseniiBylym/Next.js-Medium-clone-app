@@ -6,8 +6,6 @@ import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';
 import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
-import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import CardActionArea from '@material-ui/core/CardActionArea';
@@ -112,11 +110,11 @@ const styles = theme => ({
         },
     },
     card_action_area: {
-        padding: '2rem',
+        padding: '1rem',
     },
     avatar: {
-        width: '150px',
-        height: '150px',
+        width: '120px',
+        height: '120px',
     },
 });
 

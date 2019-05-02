@@ -25,7 +25,7 @@ exports.uploadArticleImage = multer({
     storage: multer.memoryStorage(),
     limits: {fileSize: 1024 * 1024 * 2},
     fileFilter: (req, file, next) => {
-        if (file.mimetype.startWith('image/')) {
+        if (file.mimetype.startsWith('image/')) {
             return next(null, true);
         } else {
             return next(null, false);

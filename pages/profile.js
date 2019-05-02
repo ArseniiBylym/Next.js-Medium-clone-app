@@ -13,11 +13,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
 import IconButton from '@material-ui/core/IconButton';
 import {withStyles} from '@material-ui/core/styles';
-import {MdAssignment, MdFavoriteBorder, MdPeople, MdRecordVoiceOver, MdMailOutline, MdDateRange, MdModeEdit, MdCloudUpload} from 'react-icons/md';
+import {MdAssignment, MdFavoriteBorder, MdPeople, MdRecordVoiceOver, MdMailOutline, MdDateRange, MdModeEdit} from 'react-icons/md';
 import {getDate} from '../lib/functions';
 import {inject, observer} from 'mobx-react';
 
@@ -37,6 +35,7 @@ class Profile extends Component {
     };
 
     addToFollowed = async () => {
+        const {showMessage} = this.props.store;
         const followId = this.state.user._id;
         const {data, status} = await API.PUT('/api/users/follow', {followId});
         if (status >= 300) {
@@ -48,10 +47,12 @@ class Profile extends Component {
                     followers: [...this.state.user.followers, {...this.props.store.user}],
                 },
             });
+            showMessage({text: `${this.state.user.name} added to followed`, type: 'info', dellay: 500})
         }
     };
 
     removeFromFollowed = async () => {
+        const {showMessage} = this.props.store;
         const followId = this.state.user._id;
         const {data, status} = await API.PUT('/api/users/unfollow', {followId});
         if (status >= 300) {
@@ -64,6 +65,7 @@ class Profile extends Component {
                     followers: filteredFollowers,
                 },
             });
+            showMessage({text: `${this.state.user.name} removed from followed`, type: 'info', dellay: 500})
         }
     };
 
@@ -91,6 +93,7 @@ class Profile extends Component {
     };
 
     updateHandler = async () => {
+        const {showMessage} = this.props.store;
         this.setState({sending: true});
         const {file, user: {_id, name, email, info}} = this.state;
         let body = {};
@@ -114,6 +117,7 @@ class Profile extends Component {
                 editMode: false,
             });
             this.props.store.setUser(data);
+            showMessage({text: `User profile updated`, type: 'success', dellay: 500})   
         }
     };
 
@@ -122,7 +126,6 @@ class Profile extends Component {
     };
 
     uploadAvatarHandler = e => {
-        console.log(e.target.files)
         const file = e.target.files[0];
         this.setState({file});
     };
@@ -331,6 +334,11 @@ const styles = theme => ({
         width: '150px',
         height: '150px',
     },
+    user_details: {
+        [theme.breakpoints.down('sm')]: {
+            textAlign: 'center',
+          },
+    }, 
     tab_content: {
         padding: '2rem',
     },

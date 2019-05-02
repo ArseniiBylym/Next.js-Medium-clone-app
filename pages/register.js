@@ -24,7 +24,6 @@ const defaultForm = {
     password: '',
     password_confirm: '',
     rememberUser: false,
-    errorMessage: '',
 };
 
 @inject('store')
@@ -34,14 +33,14 @@ class Register extends Component {
 
     submitHandler = async e => {
         const {name, email, password, password_confirm} = this.state;
+        const {showMessage} = this.props.store;
         e.preventDefault();
         const {data, status} = await API.POST('/api/auth/register', {name, email, password, password_confirm});
         if (status > 300) {
-            this.setState({
-                errorMessage: data
-            })
+            showMessage({text: data, type: 'error'})
         } else {
             this.props.store.setUser(data)
+            showMessage({text: `Register as ${data.name}`, type: 'info', dellay: 1500})
             this.props.router.push('/')
         }
     }
@@ -58,14 +57,8 @@ class Register extends Component {
         }
     };
 
-    snackbarCloseHandler = () => {
-        this.setState({
-            errorMessage: '',
-        })
-    }
-
     render() {
-        const {name, email, password, password_confirm, rememberUser, errorMessage} = this.state;
+        const {name, email, password, password_confirm, rememberUser} = this.state;
         const {classes} = this.props;
         return (
             <Components.Layout>
@@ -110,7 +103,6 @@ class Register extends Component {
                         </Paper>
                     </div>
                 </div>
-                <Components.Snackbar message={errorMessage} handleClose={this.snackbarCloseHandler}/>
             </Components.Layout>
         );
     }

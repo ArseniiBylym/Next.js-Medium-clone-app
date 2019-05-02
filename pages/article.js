@@ -32,6 +32,7 @@ class Article extends Component {
     };
 
     submitHandler = async e => {
+        const {showMessage} = this.props.store;
         e.preventDefault();
         const {_id, title, subTitle, text, image, tagsString} = this.state;
         this.setState({sending: true});
@@ -39,6 +40,7 @@ class Article extends Component {
         if (status >= 300) {
             console.log(data);
         } else {
+            showMessage({text: `Article was successfully updated`, type: 'success', dellay: 500})
             this.setState({
                 ...data,
                 editMode: false,
@@ -89,7 +91,7 @@ class Article extends Component {
 
     likeHandler = async () => {
         if (!this.props.store.user) return false;
-        const {user, likeArticle} = this.props.store;
+        const {user, likeArticle, showMessage} = this.props.store;
         const {_id, title, subTitle, image, createdAt} = this.state;
 
         const {data, status} = await API.PUT(`/api/articles/likes`, {articleId: _id});
@@ -99,7 +101,8 @@ class Article extends Component {
             this.setState({
                likes: [...this.state.likes].concat({_id: user._id, name: user.name, avatar: user.avatar})
             })
-            likeArticle({_id, title, subTitle, image, createdAt})
+            likeArticle({_id, title, subTitle, image, createdAt});
+            showMessage({text: `Article added to favorit`, type: 'success', dellay: 500})
         }
     };
 

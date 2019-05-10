@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_URI = process.env.BASE_URI;
+const BASE_URI = process.env.BASE_URI || '';
 
 const handleResponse = response => {
     const {data, status} = response;

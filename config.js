@@ -6,12 +6,12 @@ const CONFIG = {
         JWT_EXPIRATION_TIME: process.env.JWT_EXPIRATION_TIME || '1d',
         JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || 'secret',
         // BASE_URI: process.env.BASE_URI  || 'http://localhost:3000',
-        BASE_URI: process.env.BASE_URI,
+        BASE_URI: process.env.BASE_URI || 'https://medium-next-app.herokuapp.com' ,
     },
     client: {
         JWT_SECRET_KEY: process.env.JWT_SECRET_KEY || 'secret',
         // BASE_URI: process.env.BASE_URI  || 'http://localhost:3000',
-        BASE_URI: process.env.BASE_URI,
+        BASE_URI: process.env.BASE_URI || 'https://medium-next-app.herokuapp.com',
     }
 }
 

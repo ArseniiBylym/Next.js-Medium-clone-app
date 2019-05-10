@@ -7,6 +7,7 @@
     "dev": "nodemon server/server.js --watch server",
     "start": "node server/server.js",
     "build": "next build",
+    "export": "next export",
     "deploy": "now --public"
   },
   "keywords": [],

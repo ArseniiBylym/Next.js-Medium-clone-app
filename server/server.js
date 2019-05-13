@@ -6,14 +6,13 @@ const compression = require('compression');
 const cors = require('cors');
 const expressValidator = require('express-validator')
 const cookieParser = require('cookie-parser');
+const {PORT, MONGO_DB_URI} = require('../config');
 
-const CONFIG = require('../config');
 const authRoutes = require('./routes/auth.routes');
 const usersRoutes = require('./routes/users.routes');
 const articlesRoutes = require('./routes/articles.routes');
 
-const port = CONFIG.server.PORT;
-const dev = CONFIG.server.NODE_ENV !== 'production';
+const dev = process.env.NODE_ENV !== 'production';
 const app = next({dev});
 const handle = app.getRequestHandler();
 
@@ -64,13 +63,13 @@ app.prepare().then(() => {
 
     const mongoseOptions = {
         useNewUrlParser: true,
-        useCreateIndex: CONFIG.server.NODE_ENV === 'development'
+        useCreateIndex: process.env.NODE_ENV === 'development'
     }
-    mongoose.connect(CONFIG.server.MONGO_DB_URI, mongoseOptions)
+    mongoose.connect(MONGO_DB_URI, mongoseOptions)
         .then(() => {
-            server.listen(port, error => {
+            server.listen(PORT, error => {
                 if (error) throw error;
-                console.log(`Server listening on port ${port}`)
+                console.log(`Server listening on port ${PORT}`)
             })
         })
         .catch(error => {

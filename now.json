@@ -1,8 +1,0 @@
-{
-    "version": 2,
-    "name": "Medium-app",
-    "env": {
-        "NODE_ENV": "production",
-        "BASE_URI": ""
-    }
-}
